@@ -53,7 +53,7 @@ The script does not manage credentials itself, but requires them to be passed fr
 
 The below Jenkinsfile leverages the withCredentials Plugin in Jenkins to retrieve the SSH Key from the Jenkins credentials provider.
 
-For more details please see [Jenkins Credential Binding] (https://www.jenkins.io/doc/pipeline/steps/credentials-binding/#withcredentials-bind-credentials-to-variables)
+For more details please see [Jenkins Credential Binding](https://www.jenkins.io/doc/pipeline/steps/credentials-binding/#withcredentials-bind-credentials-to-variables)
 
 The below sample leverages a patched Jenkins Credential Binding Plugin, while we identified an issue with the encoding on USS. A PR is raised here at and we are waiting for the merge.
 https://github.com/jenkinsci/credentials-binding-plugin/pull/146
