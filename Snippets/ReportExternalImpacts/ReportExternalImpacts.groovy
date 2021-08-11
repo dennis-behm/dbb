@@ -65,11 +65,12 @@ if (props.filesList){
 	fileList.readLines().each{ files.add(it) }
 }
 // add fileList
+println "** About to inspect collections for logical files with below logical dependencies"
 files.each{ println "   $it" }
 
 // create the work directory (build output)
 new File(props.outDir).mkdirs()
-println("** Reports located at ${props.outDir}")
+println("** Start to run queries. Reports located at ${props.outDir}")
 
 reportExternalImpacts(repositoryClient, files)
 
@@ -108,7 +109,7 @@ def reportExternalImpacts(RepositoryClient repositoryClient, Set<String> changed
 				// write impactedFiles per application to build workspace
 				if (externalImpactList.size()!=0){
 					String impactListFileLoc = "${props.outDir}/externalImpacts_${cName}.${props.listFileExt}"
-					println("*** Writing report of external impacts to file $impactListFileLoc")
+					println("  Writing report of external impacts to file $impactListFileLoc")
 					File impactListFile = new File(impactListFileLoc)
 					String enc = props.logEncoding ?: 'IBM-1047'
 					impactListFile.withWriter(enc) { writer ->

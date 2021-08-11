@@ -41,7 +41,7 @@ The schema of the file contents is logicalName - logicalFile - collectionName - 
 
 ```
 EPSCMORT 	 App-EPSC/cobol/epscmort.cbl 	 App-EPSC-Scenario4 	 impacted by 	 App-EPSM/copybooks-public/epsmtcom.cpy 
-``
+```
 
 ## Invocation 
 
@@ -60,10 +60,12 @@ groovyz ReportExternalImpacts.groovy --fileNames App-EPSM/copybooks-public/epsmt
    dbb.RepositoryClient.url -> https://xxxxx:10443/dbb
    outDir -> /var/dbb/extensions/ReportExternalImpacts/test1
 ** Repository client created for https://xxxxx:10443/dbb
+** About to inspect collections for logical files with below logical dependencies
    App-EPSM/copybooks-public/epsmtcom.cpy
-** Reports located at /var/dbb/extensions/ReportExternalImpacts/test1
-*** Writing report of external impacts to file /var/dbb/extensions/ReportExternalImpacts/test1/externalImpacts_App-EPSC-Scenario4.txt
-*** Writing report of external impacts to file /var/dbb/extensions/ReportExternalImpacts/test1/externalImpacts_App-EPSC-Scenario4-outputs.txt
+** Start to run queries. Reports located at /var/dbb/extensions/ReportExternalImpacts/test1
+   Writing report of external impacts to file /var/dbb/extensions/ReportExternalImpacts/test1/externalImpacts_App-EPSC-Scenario4.txt
+   Writing report of external impacts to file /var/dbb/extensions/ReportExternalImpacts/test1/externalImpacts_App-EPSC-Scenario4-outputs.txt
+
 ```
 
 ## Command Line Options Summary
@@ -73,18 +75,18 @@ groovyz ReportExternalImpacts.groovy --fileNames App-EPSM/copybooks-public/epsmt
 
  usage: ReportExternalImpacts.groovy [options]
  
-  -o,--outDir <outDir> 			Directory where to store the output records
+  -o,--outDir <outDir>             Directory where to store the output records
   -p,--reportExternalImpactsConfigFile <configFile> Absolute path to a properties file containing the necessary configuration.
    
-  -f,--filesList <filesList>		Absolute path to a file containing references to the files
-  -l,--logicalNames <logicalName> Comma-separated list of logicalFiles
-  -n,--fileNames <fileNames> 		Comma-separated list of file names
+  -f,--filesList <filesList>       Absolute path to a file containing references to the files
+  -l,--logicalNames <logicalName>  Comma-separated list of logicalFiles
+  -n,--fileNames <fileNames>       Comma-separated list of file names
   
-  -url,--url <arg> 				DBB repository URL
-  -id,--id <arg>					DBB repository id
-  -pw,--pw <arg> 					DBB repository password
-  -pf,--pwFile <arg>  				Absolute path to file containing DBB password
+  -url,--url <arg>                 DBB repository URL
+  -id,--id <arg>                   DBB repository id
+  -pw,--pw <arg>                   DBB repository password
+  -pf,--pwFile <arg>               Absolute path to file containing DBB password
   
-  -h,--help						Prints this message
-
+  -h,--help                        Prints this message
 ```
+
