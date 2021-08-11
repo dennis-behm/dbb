@@ -78,45 +78,47 @@ reportExternalImpacts(repositoryClient, files)
 def reportExternalImpacts(RepositoryClient repositoryClient, Set<String> changedFiles){
 	// query collections to produce externalImpactList
 	List<Pattern> collectionMatcherPatterns = createMatcherPatterns(props.reportExternalImpactsCollectionPatterns)
+	List<Pattern> collectionExcludeMatcherPatterns = createMatcherPatterns(props.reportExternalImpactsCollectionExcludePatterns)
+
 
 	// caluclated and collect external impacts
 
 	repositoryClient.getAllCollections().each{ collection ->
 		String cName = collection.getName()
 
-		if(matchesPattern(cName,collectionMatcherPatterns)){ // find matching collection names
-			if (cName != props.applicationCollectionName && cName != props.applicationOutputsCollectionName){
+		if(matchesPattern(cName,collectionMatcherPatterns) && !matchesPattern(cName,collectionExcludeMatcherPatterns)){ // find matching collection names
 
-				def Set<String> externalImpactList = new HashSet<String>()
+			def Set<String> externalImpactList = new HashSet<String>()
 
-				changedFiles.each{ changedFile->
+			changedFiles.each{ changedFile->
 
-					List<PathMatcher> fileMatchers = createPathMatcherPattern(props.reportExternalImpactsAnalysisFileFilter)
+				List<PathMatcher> fileMatchers = createPathMatcherPattern(props.reportExternalImpactsAnalysisFileFilter)
 
-					if(matches(changedFile, fileMatchers) || matchesPattern(changedFile, [Pattern.compile('^[a-zA-Z0-9]{0,8}$')])){
+				if(matches(changedFile, fileMatchers) || matchesPattern(changedFile, [
+					Pattern.compile('^[a-zA-Z0-9]{0,8}$')
+				])){
 
-						String memberName = CopyToPDS.createMemberName(changedFile)
-						def ldepFile = new LogicalDependency(memberName, null, null);
-						// Simple resolution without recursive resolution because we don't deal with phyisical files
-						def logicalFiles = repositoryClient.getAllLogicalFiles(cName, ldepFile);
-						logicalFiles.each{ logicalFile ->
-							def impactRecord = "${logicalFile.getLname()} \t ${logicalFile.getFile()} \t ${cName} \t impacted by \t $changedFile"
-							//println("*** $impactRecord")
-							externalImpactList.add(impactRecord)
-						}
+					String memberName = CopyToPDS.createMemberName(changedFile)
+					def ldepFile = new LogicalDependency(memberName, null, null);
+					// Simple resolution without recursive resolution because we don't deal with phyisical files
+					def logicalFiles = repositoryClient.getAllLogicalFiles(cName, ldepFile);
+					logicalFiles.each{ logicalFile ->
+						def impactRecord = "${logicalFile.getLname()} \t ${logicalFile.getFile()} \t ${cName} \t impacted by \t $changedFile"
+						//println("*** $impactRecord")
+						externalImpactList.add(impactRecord)
 					}
 				}
-				// write impactedFiles per application to build workspace
-				if (externalImpactList.size()!=0){
-					String impactListFileLoc = "${props.outDir}/externalImpacts_${cName}.${props.listFileExt}"
-					println("  Writing report of external impacts to file $impactListFileLoc")
-					File impactListFile = new File(impactListFileLoc)
-					String enc = props.logEncoding ?: 'IBM-1047'
-					impactListFile.withWriter(enc) { writer ->
-						externalImpactList.each { file ->
-							// if (props.verbose) println file
-							writer.write("$file\n")
-						}
+			}
+			// write impactedFiles per application to build workspace
+			if (externalImpactList.size()!=0){
+				String impactListFileLoc = "${props.outDir}/externalImpacts_${cName}.${props.listFileExt}"
+				println("  Writing report of external impacts to file $impactListFileLoc")
+				File impactListFile = new File(impactListFileLoc)
+				String enc = props.logEncoding ?: 'IBM-1047'
+				impactListFile.withWriter(enc) { writer ->
+					externalImpactList.each { file ->
+						// if (props.verbose) println file
+						writer.write("$file\n")
 					}
 				}
 			}

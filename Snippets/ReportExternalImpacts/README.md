@@ -30,6 +30,7 @@ App-EPSM/link/epsmlist.lnk
 
 The sample script allows to scope the query by providing
 * a filter of collection names via property `reportExternalImpactsCollectionPatterns` to query only collections with a provided name pattern.
+* a filter to definitely exclude collections via `reportExternalImpactsCollectionExludePatterns`
 * a filter for the file extensions of input files `reportExternalImpactsAnalysisFileFilter`
 
 ### Outputs
