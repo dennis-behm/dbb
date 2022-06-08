@@ -620,7 +620,7 @@ def parseStringToMap(String packageProperty) {
 			map.put(key, value)
 		}
 	} catch (Exception e) {
-		errorMsg = "*! dbb-ucd-packaging.parseStringToMap - Failed to parse setting $packageProperty from String into a Map object. Process exiting."
+		String errorMsg = "*! dbb-ucd-packaging.parseStringToMap - Failed to parse setting $packageProperty from String into a Map object. Process exiting."
 		println errorMsg
 		println e.getMessage()
 		System.exit(3)
