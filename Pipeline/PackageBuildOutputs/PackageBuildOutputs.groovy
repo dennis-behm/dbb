@@ -298,6 +298,19 @@ if (buildOutputsMap.size() == 0) {
 	
 	def tarFile = new File("$props.workDir/${tarFileName}")
 
+	//Package additional outputs to tar file.
+	if (props.includeLogs) (props.includeLogs).split(",").each { logPattern ->
+		println("** Adding $logPattern to $tarFile.")
+		processCmd = [
+			"sh",
+			"-c",
+			"cp $logPattern $tempLoadDir"
+		]
+				
+		rc = runProcess(processCmd, new File(props.workDir))
+		assert rc == 0 : "Failed to append $logPattern"
+	}
+	
 	println("** Creating tar file at $tarFile.")
 	// Note: https://www.ibm.com/docs/en/zos/2.4.0?topic=scd-tar-manipulate-tar-archive-files-copy-back-up-file
 	// To save all attributes to be restored on z/OS and non-z/OS systems : tar -UX
@@ -309,19 +322,6 @@ if (buildOutputsMap.size() == 0) {
 
 	def rc = runProcess(processCmd, tempLoadDir)
 	assert rc == 0 : "Failed to package"
-
-	//Package additional outputs to tar file.
-	if (props.includeLogs) (props.includeLogs).split(",").each { logPattern ->
-		println("** Adding $logPattern to $tarFile.")
-		processCmd = [
-			"sh",
-			"-c",
-			"tar rUXf $tarFile $logPattern"
-		]
-				
-		rc = runProcess(processCmd, new File(props.workDir))
-		assert rc == 0 : "Failed to append $logPattern"
-	}
 			
 	println ("** Package successfully created at $tarFile.")
 			
