@@ -1,0 +1,24 @@
+# Application Descriptor Prototype
+
+application: retirementCalculator
+description: The retirement calculator application
+owner: Alice Wonderland
+
+source:
+  - name: cobol # can be multiple
+    languageProcessor: COBOL.groovy # languageProcessor is not used, could be used to map old to future
+    files: # all files that the application is claiming ownership
+      - name: ebud01
+        type: COBBATCH    # type is not used, but could be used to setup the language configuration mapping
+      - name: ebud02
+        type: COBBATCH
+      - name: ebud03
+        type: COBBATCH
+      - name: ebud0run
+        type: COBBATCH
+# Addition types could be noted in their own map
+  # - name: copy
+  #   languageProcessor : "none"
+  #   files: 
+  #     - name: LINPUT
+  #       type: COPY
