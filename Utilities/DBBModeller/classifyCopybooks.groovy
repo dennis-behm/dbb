@@ -14,28 +14,29 @@ import groovy.cli.commons.*
 
 @Field BuildProperties props = BuildProperties.getInstance()
 @Field MetadataStore metadataStore
+@Field def appDescriptorUtils = loadScript(new File("utils/applicationDescriptorUtils.groovy"))
 
-/**
- * Internal Classes to write objects back to a new application - YAML
- */
-class ApplicationDescriptor {
-	String application
-	String description
-	String owner
-	ArrayList<SourceGroup> source
-}
-
-class SourceGroup {
-	String name
-	String languageProcessor
-	ArrayList<FileDef> files
-}
-
-class FileDef {
-	String name
-	String type
-	String usage
-}
+///**
+// * Internal Classes to write objects back to a new application - YAML
+// */
+//class ApplicationDescriptor {
+//	String application
+//	String description
+//	String owner
+//	ArrayList<Source> sources
+//}
+//
+//class SourceGroup {
+//	String name
+//	String languageProcessor
+//	ArrayList<FileDef> files
+//}
+//
+//class FileDef {
+//	String name
+//	String type
+//	String usage
+//}
 
 
 /**
@@ -49,18 +50,27 @@ Map<String, Map> applicationConfigurationsMap = new HashMap<String, Map>()
  * Processing logic
  */
 
-parseArgs(args)
+println ("** Classification Process started. ")
 
+// Initialization
+parseArgs(args)
 initScriptParameters()
+
+// Print parms
+println("** Script configuration:")
+props.each { k,v->
+	println "   $k -> $v"
+}
+
+// create metadatstore
+metadataStore = MetadataStoreFactory.createFileMetadataStore("${props.workspace}/.dbb")
+println "** File MetadataStore initialized at ${props.workspace}/.dbb"
 
 println ("** Get list of files. ")
 Set<String> appFiles = getFileList()
 
 println ("** Analyze impacted applications. ")
 assessImpactedFiles(appFiles)
-
-
-println ("** Create updated application configurations. ")
 
 
 /** Methods **/
@@ -102,9 +112,37 @@ def assessImpactedFiles(appFiles) {
 		if (referencingCollections.size() == 1) {
 			println "    ==> $file is owned by application ${referencingCollections[0]} "
 			// append to YAML
+
+			def movedCopybook
 			
 			// TODO: determine the segment in target directory
-			if (props.copySharedCopybooks) copyMemberToApplicationFolder(file, "${referencingCollections[0]}/copy/")
+			if (props.copySharedCopybooks) 
+				movedCopybook = copyMemberToApplicationFolder(file, "${referencingCollections[0]}/copy/")
+
+			// If update flag is set
+			if (props.generateUpdatedApplicationConfiguration) {
+
+				File userAppConfigurationYaml = new File("${props.inputConfigurations}/${referencingCollections[0]}.yaml")
+				File updateAppConfigurationYaml = new File("${props.workspace}/${referencingCollections[0]}/${referencingCollections[0]}.yaml")
+				
+				// determine which YAML file to use
+				def appConfiguration
+
+				if (updateAppConfigurationYaml.exists()) { // update
+					appConfiguration = appDescriptorUtils.readApplicationDescriptor(updateAppConfigurationYaml)
+				}else { // use application yaml provided by user
+					appConfiguration = appDescriptorUtils.readApplicationDescriptor(userAppConfigurationYaml)
+				}
+				
+				// append definition
+				memberName = CopyToPDS.createMemberName(file)
+				appConfiguration = appDescriptorUtils.appendFileDefinition(appConfiguration, "copy", "none", memberName, "COPYBOOK", "PRIVATE")
+
+				// update YAML file
+				println "        Adding $movedCopybook to application descriptor " + updateAppConfigurationYaml.getPath()
+				appDescriptorUtils.writeApplicationDescriptor(updateAppConfigurationYaml, appConfiguration)
+				
+			}
 
 		} else {
 			println "    ==> $file referenced by multiple applications. $referencingCollections "
@@ -129,8 +167,8 @@ def parseArgs(String[] args) {
 	cli.c(longOpt:'configurations', args:1, required:true, 'Path of application configuration Yaml files.')
 	cli.cf(longOpt:'copySharedCopybooks', args:0, 'Flag to indicate if shared copybooks should be moved.')
 	cli.g(longOpt:'generateUpdatedApplicationConfiguration', args:0, 'Flag to generate updated application configuration file.')
-	
-	
+
+
 	def opts = cli.parse(args)
 	if (!opts) {
 		System.exit(1)
@@ -172,18 +210,20 @@ def findImpactedFiles(String impactSearch, String file) {
  *  
  */
 def copyMemberToApplicationFolder(String src, String trgtDir) {
-	
+
 	Path source = Paths.get("${props.workspace}", src);
 	targetFile = source.getFileName().toString()
 	targetDir = "${props.workspace}/${trgtDir}"
 	if (!(new File(targetDir).exists())) new File(targetDir).mkdirs()
-		
+
 	Path target = Paths.get(targetDir, targetFile);
 
 	if (source.toFile().exists()) {
 		println "        Moving ${source.toString()} to ${target.toString()}"
 		Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
 	}
+	
+	return target.toString()
 }
 
 /* 
@@ -204,9 +244,6 @@ def initScriptParameters() {
 
 	// searchpath
 	props.copybookImpactSearch = "search:${props.workspace}/?path=${props.application}/*.cpy;*/copy/*.cpy" as String
-
-	metadataStore = MetadataStoreFactory.createFileMetadataStore("${props.workspace}/.dbb")
-	println "** File MetadataStore initialized at ${props.workspace}/.dbb"
 }
 
 /*

@@ -15,8 +15,6 @@ import java.nio.file.*
  * 
  */
 
-
-
 // Internal objects
 def yamlSlurper = new groovy.yaml.YamlSlurper()
 def applicationDefinition=""
@@ -32,14 +30,14 @@ println "* Parsing file \t: ${applicationDefinition}"
 println "* Dispatching files from ${sourceDir} to ${targetDir}"
 appConfiguration = yamlSlurper.parse(new File(applicationDefinition))
 println "* Application \t: ${appConfiguration.application}"
-appConfiguration.source.each { sourceGroup ->
+appConfiguration.sources.each { sourceGroup ->
 	targetApplicationDir = "${targetDir}/${appConfiguration.application}/${sourceGroup.name}/"
 	
 	println " ** Moving Source Code Type \"${sourceGroup.name}\" to target directory $targetApplicationDir"
 	sourceGroup.files.each { member ->
 		
-		Path source = Paths.get("${sourceDir}/${sourceGroup.name}/", "${member.name}.cbl");
-		Path target = Paths.get("${targetApplicationDir}","${member.name}.cbl")
+		Path source = Paths.get("${sourceDir}/${sourceGroup.name}/", "${member.name}.${sourceGroup.fileExtension}");
+		Path target = Paths.get("${targetApplicationDir}","${member.name}.${sourceGroup.fileExtension}")
 		if (!(new File(targetApplicationDir).exists())) new File(targetApplicationDir).mkdirs()
 			if (source.toFile().exists()) {
 			println "\t Moving ${source.toString()} to ${targetApplicationDir}"

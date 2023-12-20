@@ -14,7 +14,10 @@ export DBB_CONF=/usr/lpp/dbb/v2r0/conf
 hlq=DBEHM.MIG
 
 # path for storing all files
-SCRIPT_HOME="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+SCRIPT_HOME="$(
+    cd -- "$(dirname "$0")" >/dev/null 2>&1
+    pwd -P
+)"
 PARENT_DIR="$(dirname "$SCRIPT_HOME")"
 codebaseDir="${PARENT_DIR}/work_codebase"
 
