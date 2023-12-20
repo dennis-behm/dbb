@@ -117,7 +117,7 @@ def assessImpactedFiles(appFiles) {
 			
 			// TODO: determine the segment in target directory
 			if (props.copySharedCopybooks) 
-				movedCopybook = copyMemberToApplicationFolder(file, "${referencingCollections[0]}/copy/")
+				movedCopybook = copyMemberToApplicationFolder(file, "${referencingCollections[0]}/${props.defaultCopybookFolderName}/")
 
 			// If update flag is set
 			if (props.generateUpdatedApplicationConfiguration) {
@@ -135,8 +135,10 @@ def assessImpactedFiles(appFiles) {
 				}
 				
 				// append definition
-				memberName = CopyToPDS.createMemberName(file)
-				appConfiguration = appDescriptorUtils.appendFileDefinition(appConfiguration, "copy", "none", memberName, "COPYBOOK", "PRIVATE")
+				Path pFile = Paths.get(file)
+				memberName = pFile.getFileName().toString().substring(0, pFile.getFileName().toString().indexOf("."))
+				
+				appConfiguration = appDescriptorUtils.appendFileDefinition(appConfiguration, props.defaultCopybookFolderName, "none", props.defaultCopybookFileExtension, memberName, "COPYBOOK", "PRIVATE")
 
 				// update YAML file
 				println "        Adding $movedCopybook to application descriptor " + updateAppConfigurationYaml.getPath()
@@ -242,6 +244,10 @@ def initScriptParameters() {
 		System.exit(1)
 	}
 
+	// TODO: Customize here
+	props.defaultCopybookFileExtension = "cpy"
+	props.defaultCopybookFolderName = "copy"
+	
 	// searchpath
 	props.copybookImpactSearch = "search:${props.workspace}/?path=${props.application}/*.cpy;*/copy/*.cpy" as String
 }

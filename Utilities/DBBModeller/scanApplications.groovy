@@ -62,7 +62,7 @@ def scanFiles(fileList) {
 	List<LogicalFile> logicalFiles = new ArrayList<LogicalFile>()
 	fileList.each{ file ->
 		DependencyScanner scanner = new DependencyScanner()
-		println "  .scanning file $file "
+		println "\t Scanning file $file "
 		
 		logicalFile = scanner.scan(file, props.workspace)
 		//println "*** Logical file for $file =\n$logicalFile"
