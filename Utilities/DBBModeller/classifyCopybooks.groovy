@@ -141,14 +141,41 @@ def assessImpactedFiles(appFiles) {
 				appConfiguration = appDescriptorUtils.appendFileDefinition(appConfiguration, props.defaultCopybookFolderName, "none", props.defaultCopybookFileExtension, memberName, "COPYBOOK", "PRIVATE")
 
 				// update YAML file
-				println "        Adding $movedCopybook to application descriptor " + updateAppConfigurationYaml.getPath()
+				println "        Adding private copybook $movedCopybook to application descriptor " + updateAppConfigurationYaml.getPath()
+				appDescriptorUtils.writeApplicationDescriptor(updateAppConfigurationYaml, appConfiguration)
+				
+			}
+
+		} else if (referencingCollections.size() > 1) {
+			println "    ==> $file referenced by multiple applications. $referencingCollections "
+			
+			// document as a external dependency, if update flag is set
+			if (props.generateUpdatedApplicationConfiguration && props.application != "Unclassified-Copybooks") {
+
+				File userAppConfigurationYaml = new File("${props.inputConfigurations}/${props.application}.yaml")
+				File updateAppConfigurationYaml = new File("${props.workspace}/${props.application}/${props.application}.yaml")
+				
+				// determine which YAML file to use
+				def appConfiguration
+
+				if (updateAppConfigurationYaml.exists()) { // update
+					appConfiguration = appDescriptorUtils.readApplicationDescriptor(updateAppConfigurationYaml)
+				}else { // use application yaml provided by user
+					appConfiguration = appDescriptorUtils.readApplicationDescriptor(userAppConfigurationYaml)
+				}
+				
+				// append definition
+				Path pFile = Paths.get(file)
+				memberName = pFile.getFileName().toString().substring(0, pFile.getFileName().toString().indexOf("."))
+				// update YAML file
+				println "        Adding public copybook $file to application descriptor " + updateAppConfigurationYaml.getPath()
+				appDescriptorUtils.appendFileDefinition(appConfiguration, props.defaultCopybookFolderName, "none", props.defaultCopybookFileExtension, memberName, "COPYBOOK", "PUBLIC")			
 				appDescriptorUtils.writeApplicationDescriptor(updateAppConfigurationYaml, appConfiguration)
 				
 			}
 
 		} else {
-			println "    ==> $file referenced by multiple applications. $referencingCollections "
-			// document as a external dependency
+			println "\t No references found for include file $file."
 		}
 	}
 
@@ -220,12 +247,13 @@ def copyMemberToApplicationFolder(String src, String trgtDir) {
 
 	Path target = Paths.get(targetDir, targetFile);
 
-	if (source.toFile().exists()) {
+	if (source.toFile().exists() && source.toString() != target.toString()) {
 		println "        Moving ${source.toString()} to ${target.toString()}"
 		Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
+		return target.toString()
 	}
 	
-	return target.toString()
+	return null
 }
 
 /* 
