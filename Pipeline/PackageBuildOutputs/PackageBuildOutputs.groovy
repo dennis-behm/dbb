@@ -273,6 +273,8 @@ props.buildReportOrder.each { buildReportFile ->
 								propertiesRecord: buildResultPropertiesRecord,
 								dependencySetRecord: dependencySetRecord
 							])
+						} else {
+							if (props.verbose) println("*! Build output ${output.dataset} with deployType '${output.deployType}' has been excluded from packaging.")
 						}
 					}
 				}
@@ -476,70 +478,82 @@ if (rc == 0) {
 
 			println("*** Number of build outputs to package: ${buildOutputsMap.size()}")
 
-			// TODO: Add to properties
-			def shared = ["OBJ"]
-			def generated = ["GEN", "OBJ"]
+			def publicInterfacesDeployTypes
+			def derivedInterfacesDeployTypes
+			def processedArtifacts = 0 // used as a checksum that all files got categorized
+			
+			if (props.publicInterfaces) publicInterfacesDeployTypes = props.publicInterfaces.split(",") // split comma separated list into list
+			if (props.internalInterfaces) derivedInterfacesDeployTypes = props.internalInterfaces.split(",") // split comma separated list into list
 
 			println("** Copy deployable outputs to temporary package directory '$tempLoadDir/$binSubfolder'")
 			deployableOutputs = buildOutputsMap.findAll { deployableArtifact, info ->
-				!(generated.contains(deployableArtifact.deployType) || shared.contains(deployableArtifact.deployType))
+				!((publicInterfacesDeployTypes && publicInterfacesDeployTypes.contains(deployableArtifact.deployType)) || (derivedInterfacesDeployTypes && derivedInterfacesDeployTypes.contains(deployableArtifact.deployType)))
 			}
 			copyArtifactsToUSS(deployableOutputs, binSubfolder)
+			processedArtifacts += deployableOutputs.size()
 
-			if (applicationDescriptor) {
-
-				// build outputs that are mapped to a shared deployType and are flagged as 'service submodule' in the application descriptor
-				publicDerivedBuildOutputs = buildOutputsMap.findAll { deployableArtifact, info ->
-					fileUsage = applicationDescriptorUtils.getFileUsageByType(applicationDescriptor, "Program", deployableArtifact.file)
-					shared.contains(deployableArtifact.deployType) && fileUsage && fileUsage.equals("service submodule")
+			if (applicationDescriptor) { // application descriptor needs to be present for categorizing artifacts
+								
+				if (publicInterfacesDeployTypes) {
+					// build outputs that are mapped to a shared deployType and are flagged as 'service submodule' in the application descriptor
+					publicDerivedBuildOutputs = buildOutputsMap.findAll { deployableArtifact, info ->
+						fileUsage = applicationDescriptorUtils.getFileUsageByType(applicationDescriptor, "Program", deployableArtifact.file)
+						publicInterfacesDeployTypes.contains(deployableArtifact.deployType) && fileUsage && fileUsage.equals("service submodule")
+					}
+					println("** Copy public build outputs to temporary package directory '$tempLoadDir/$includeSubfolder'")
+					copyArtifactsToUSS(publicDerivedBuildOutputs, includeSubfolder)
+					processedArtifacts += publicDerivedBuildOutputs.size()
 				}
-				
-				// build outputs that are mapped to a shared deployType and are flagged as 'internal submodule' in the application descriptor
-				internalDerivedBuildOutputs = buildOutputsMap.findAll { deployableArtifact, info ->
-					fileUsage = applicationDescriptorUtils.getFileUsageByType(applicationDescriptor, "Program", deployableArtifact.file)
-					generated.contains(deployableArtifact.deployType) && fileUsage && fileUsage.equals("internal submodule")
-				}
-				
-				println("** Copy public build outputs to temporary package directory '$tempLoadDir/$includeSubfolder'")
-				copyArtifactsToUSS(publicDerivedBuildOutputs, includeSubfolder)
 
-				println("** Copy internal outputs to temporary package directory '$tempLoadDir/$internalSubfolder'")
-				copyArtifactsToUSS(internalDerivedBuildOutputs, internalSubfolder)
-				
-				if (deployableOutputs.size() + publicDerivedBuildOutputs.size() + internalDerivedBuildOutputs.size() != buildOutputsMap.size()) {
+				if (derivedInterfacesDeployTypes) {
+					// build outputs that are mapped to a shared deployType and are flagged as 'internal submodule' in the application descriptor
+					internalDerivedBuildOutputs = buildOutputsMap.findAll { deployableArtifact, info ->
+						fileUsage = applicationDescriptorUtils.getFileUsageByType(applicationDescriptor, "Program", deployableArtifact.file)
+						derivedInterfacesDeployTypes.contains(deployableArtifact.deployType) && fileUsage && fileUsage.equals("internal submodule")
+					}
+					println("** Copy internal outputs to temporary package directory '$tempLoadDir/$internalSubfolder'")
+					copyArtifactsToUSS(internalDerivedBuildOutputs, internalSubfolder)
+					processedArtifacts += internalDerivedBuildOutputs.size()
+				}
+
+				if (processedArtifacts != buildOutputsMap.size()) {
 					println("*! [WARNING] The number of copied artifacts does not match the identified build outputs ${buildOutputsMap.size()} . Most likely files got not assigned a correct field in the application descriptor.")
 				}
 				
 				// Checks if all binary interfaces (submodules) are in the archive or not
+				println("** Validate if all derived interfaces declared in application descriptor got processed.")
 				checkBinaryInterfaces(tempLoadDir, applicationDescriptor)
+				
+				if (props.publishInterfaces && props.publishInterfaces.toBoolean()) {
 
-				
-				ArrayList<String> publicIncludeFiles = applicationDescriptorUtils.getFilesByTypeAndUsage(applicationDescriptor, "Include File", "public")
-				ArrayList<String> sharedIncludeFiles = applicationDescriptorUtils.getFilesByTypeAndUsage(applicationDescriptor, "Include File", "shared")
-				
-				
-				if (publicIncludeFiles && !publicIncludeFiles.isEmpty()) {
-					if (sharedIncludeFiles && !sharedIncludeFiles.isEmpty()) {
-						publicIncludeFiles.addAll(sharedIncludeFiles)
-					}
-					
-					println("*** Number of public source code interfaces to package: ${publicIncludeFiles.size()}")
-					println("** Copy all public source code interfaces from application repository to temporary package directory '$tempLoadDir'")
-					
-					publicIncludeFiles.forEach() { includeFile ->
-						Path includeFilePath = Paths.get("${props.applicationFolderPath}/${includeFile}")
-						Path targetIncludeFilePath = Paths.get("${tempLoadDir.getPath()}/${includeSubfolder}/src/${includeFilePath.getFileName()}")
-						if (props.verbose) println("\tCopy '${includeFilePath}' file to '${targetIncludeFilePath}'")
-						try {
-							//Create target parent folder if it doesn't exist
-							def targetIncludeFilesFolder = targetIncludeFilePath.getParent().toFile()
-							if (!targetIncludeFilesFolder.exists()) {
-								targetIncludeFilesFolder.mkdirs()
+					ArrayList<String> publicIncludeFiles = applicationDescriptorUtils.getFilesByTypeAndUsage(applicationDescriptor, "Include File", "public")
+					ArrayList<String> sharedIncludeFiles = applicationDescriptorUtils.getFilesByTypeAndUsage(applicationDescriptor, "Include File", "shared")
+
+
+					if (publicIncludeFiles && !publicIncludeFiles.isEmpty()) {
+						if (sharedIncludeFiles && !sharedIncludeFiles.isEmpty()) {
+							publicIncludeFiles.addAll(sharedIncludeFiles)
+						}
+
+						println("*** Number of public source code interfaces to package: ${publicIncludeFiles.size()}")
+						println("** Copy all public source code interfaces from application repository to temporary package directory '$tempLoadDir'")
+
+						publicIncludeFiles.forEach() { includeFile ->
+							Path includeFilePath = Paths.get("${props.applicationFolderPath}/${includeFile}")
+							Path targetIncludeFilePath = Paths.get("${tempLoadDir.getPath()}/${includeSubfolder}/src/${includeFilePath.getFileName()}")
+							try {
+								//Create target parent folder if it doesn't exist
+								def targetIncludeFilesFolder = targetIncludeFilePath.getParent().toFile()
+								if (!targetIncludeFilesFolder.exists()) {
+									targetIncludeFilesFolder.mkdirs()
+								}
+								println("\tCopy '${includeFilePath}' file to '${targetIncludeFilePath}'")
+								runShellCmd("cp -Rf $includeFilePath $targetIncludeFilePath")
+								
+							} catch (IOException exception) {
+								println "!* [ERROR] Copy failed: an error occurred when copying '${includeFilePath}' to '${targetIncludeFilePath}'"
+								rc = Math.max(rc, 1)
 							}
-							Files.copy(includeFilePath, targetIncludeFilePath, COPY_ATTRIBUTES, REPLACE_EXISTING)
-						} catch (IOException exception) {
-							println "!* [ERROR] Copy failed: an error occurred when copying '${includeFilePath}' to '${targetIncludeFilePath}'"
-							rc = Math.max(rc, 1)
 						}
 					}
 				}
@@ -950,7 +964,7 @@ def parseInput(String[] cliArgs){
 
 	if (opts.o) props.owner = opts.o
 
-	props.verbose = (opts.verb) ? 'true' : 'false'
+	if (opts.verb) props.verbose = 'true'
 	
 	if (opts.af) {
 		props.applicationFolderPath = opts.af
@@ -1125,7 +1139,7 @@ def checkBinaryInterfaces(File tempLoadDir, applicationDescriptor) {
 		File expectedInterfacePrivate = new File("${tempLoadDir.getAbsolutePath()}/$expectedFileNamePrivate")
 		
 		if (!(expectedInterface.exists() || expectedInterfacePrivate.exists())) { //  not found
-			println("*! [WARNING] Binary interface for $member not found in interface folders. Tar not exposing all interfaces.")
+			println("*! [WARNING] Binary interface for $member not found in interface folders. Tar not exposing all declared interfaces.")
 		}
 	}
 }
@@ -1187,5 +1201,19 @@ def retrieveBuildResultProperty(PropertiesRecord buildResultPropertiesRecord, St
 		} else {
 			return null
 		}
+	}
+}
+
+// Methods
+def runShellCmd(String cmd){
+	StringBuffer resp = new StringBuffer()
+	StringBuffer error = new StringBuffer()
+
+	Process process = cmd.execute()
+	process.waitForProcessOutput(resp, error)
+	if (error) {
+		String warningMsg = "*! Failed to execute shell command $cmd"
+		println(warningMsg)
+		println(error)
 	}
 }
