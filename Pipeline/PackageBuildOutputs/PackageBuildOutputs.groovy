@@ -561,7 +561,7 @@ if (rc == 0) {
 			} else {
 				// grouping of build outputs for shared and generated source only available via Application Descriptor
 				skippedDeployableOutputs = buildOutputsMap.findAll { deployableArtifact, info ->
-					(generated.contains(deployableArtifact.deployType) || shared.contains(deployableArtifact.deployType))
+					(derivedInterfacesDeployTypes.contains(deployableArtifact.deployType) || publicInterfacesDeployTypes.contains(deployableArtifact.deployType))
 				}
 				if (skippedDeployableOutputs) {
 					println("** Number of skipped build outputs: ${skippedDeployableOutputs.size()}")
