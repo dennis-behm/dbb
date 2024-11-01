@@ -66,8 +66,11 @@ def scriptDir = new File(getClass().protectionDomain.codeSource.location.path).p
 @Field def applicationDescriptor
 @Field def sbomUtilities
 @Field def rc = 0
-@Field String includeSubfolder = "include"
+
+@Field String includeSubfolder = "public"
 @Field String binSubfolder = "bin"
+@Field String internalSubfolder = "private"
+@Field def tempLoadDir
 
 def startTime = new Date()
 
@@ -90,10 +93,6 @@ if (rc != 0) {
 
 // Enable file tagging
 BuildProperties.setProperty("dbb.file.tagging", "true") // Enable dbb file tagging
-
-// Map of last level dataset qualifier to DBB CopyToHFS CopyMode.
-def copyModeMap = parseCopyModeMap(props.copyModeMap)
-
 
 // Hashmap of BuildOutput to Record
 Map<DeployableArtifact, Map> buildOutputsMap = new HashMap<DeployableArtifact, Map>()
@@ -260,8 +259,8 @@ props.buildReportOrder.each { buildReportFile ->
 						if (applicationDescriptor && output.deployType.equals("OBJ")) {
 							fileUsage = applicationDescriptorUtils.getFileUsageByType(applicationDescriptor, "Program", member)
 						}
-						// If the artifact is not an Object Deck or has no usage or its usage is not main
-						if ((output.deployType.equals("OBJ") && fileUsage && !fileUsage.equals("main")) || !output.deployType.equals("OBJ")) { 
+						// Leave OBJs with main behind
+						if ((output.deployType.equals("OBJ") && fileUsage && (fileUsage.equals("service submodule") || fileUsage.equals("internal submodule")) ) || !output.deployType.equals("OBJ")) { 
 							datasetMembersCount++
 							String file = buildRecord.getFile()
 							def dependencySetRecord = buildReport.getRecords().find {
@@ -382,7 +381,7 @@ if (rc == 0) {
 		def tarFile = "$props.workDir/${tarFileName}"
 	
 		//Create a temporary directory on zFS to copy the load modules from data sets to
-		def tempLoadDir = new File("$props.workDir/tempPackageDir")
+		tempLoadDir = new File("$props.workDir/tempPackageDir")
 		!tempLoadDir.exists() ?: tempLoadDir.deleteDir()
 		tempLoadDir.mkdirs()
 		
@@ -473,102 +472,88 @@ if (rc == 0) {
 			}				
 		}
 		
-		if (rc == 0) {	
-	
+		if (rc == 0) {
+
 			println("*** Number of build outputs to package: ${buildOutputsMap.size()}")
-		
-			println("** Copy build outputs to temporary package directory '$tempLoadDir'")
-		
-			buildOutputsMap.each { deployableArtifact, info ->
-				String container = info.get("container")
-				String owningApplication = info.get("owningApplication")
-				Record record = info.get("record")
-				PropertiesRecord propertiesRecord = info.get("propertiesRecord")
-				DependencySetRecord dependencySetRecord = info.get("dependencySetRecord")
+
+			// TODO: Add to properties
+			def shared = ["OBJ"]
+			def generated = ["GEN", "OBJ"]
+
+			println("** Copy deployable outputs to temporary package directory '$tempLoadDir/$binSubfolder'")
+			deployableOutputs = buildOutputsMap.findAll { deployableArtifact, info ->
+				!(generated.contains(deployableArtifact.deployType) || shared.contains(deployableArtifact.deployType))
+			}
+			copyArtifactsToUSS(deployableOutputs, binSubfolder)
+
+			if (applicationDescriptor) {
+
+				// build outputs that are mapped to a shared deployType and are flagged as 'service submodule' in the application descriptor
+				publicDerivedBuildOutputs = buildOutputsMap.findAll { deployableArtifact, info ->
+					fileUsage = applicationDescriptorUtils.getFileUsageByType(applicationDescriptor, "Program", deployableArtifact.file)
+					shared.contains(deployableArtifact.deployType) && fileUsage && fileUsage.equals("service submodule")
+				}
 				
-				def relativeFilePath = ""
-				if (deployableArtifact.artifactType.equals("zFSFile")) {
-						relativeFilePath = "$binSubfolder"
-				} else {
-						if (deployableArtifact.deployType.equals("OBJ")) {
-							relativeFilePath = "$includeSubfolder/bin"
-						} else {
-							relativeFilePath = "$binSubfolder/${deployableArtifact.deployType}"
-						}
+				// build outputs that are mapped to a shared deployType and are flagged as 'internal submodule' in the application descriptor
+				internalDerivedBuildOutputs = buildOutputsMap.findAll { deployableArtifact, info ->
+					fileUsage = applicationDescriptorUtils.getFileUsageByType(applicationDescriptor, "Program", deployableArtifact.file)
+					generated.contains(deployableArtifact.deployType) && fileUsage && fileUsage.equals("internal submodule")
 				}
-		
-				// define file name in USS
-				def fileName = deployableArtifact.file
-		
-				// add deployType to file name
-				if (props.addExtension && props.addExtension.toBoolean()) {
-					fileName = fileName + '.' + deployableArtifact.deployType
+				
+				println("** Copy public build outputs to temporary package directory '$tempLoadDir/$includeSubfolder'")
+				copyArtifactsToUSS(publicDerivedBuildOutputs, includeSubfolder)
+
+				println("** Copy internal outputs to temporary package directory '$tempLoadDir/$internalSubfolder'")
+				copyArtifactsToUSS(internalDerivedBuildOutputs, internalSubfolder)
+				
+				if (deployableOutputs.size() + publicDerivedBuildOutputs.size() + internalDerivedBuildOutputs.size() != buildOutputsMap.size()) {
+					println("*! [WARNING] The number of copied artifacts does not match the identified build outputs ${buildOutputsMap.size()} . Most likely files got not assigned a correct field in the application descriptor.")
 				}
-				def file = new File("$tempLoadDir/$relativeFilePath/$fileName")
-		
-				def (directory, relativeFileName) = extractDirectoryAndFile(file.toPath().toString())
-				new File(directory).mkdirs()
-		
-		
-				if (deployableArtifact.artifactType.equals("zFSFile")) {
-					def originalFile = new File(container + "/" + deployableArtifact.file)
-					println "\tCopy '${originalFile.toPath()}' to '${file.toPath()}'"
-					try {
-						Files.copy(originalFile.toPath(), file.toPath(), StandardCopyOption.COPY_ATTRIBUTES);
-					} catch (IOException exception) {
-						println "!* [ERROR] Copy failed: an error occurred when copying '${originalFile.toPath()}' to '${file.toPath()}'"
-						rc = Math.max(rc, 1) 
+				
+				// Checks if all binary interfaces (submodules) are in the archive or not
+				checkBinaryInterfaces(tempLoadDir, applicationDescriptor)
+
+				
+				ArrayList<String> publicIncludeFiles = applicationDescriptorUtils.getFilesByTypeAndUsage(applicationDescriptor, "Include File", "public")
+				ArrayList<String> sharedIncludeFiles = applicationDescriptorUtils.getFilesByTypeAndUsage(applicationDescriptor, "Include File", "shared")
+				
+				
+				if (publicIncludeFiles && !publicIncludeFiles.isEmpty()) {
+					if (sharedIncludeFiles && !sharedIncludeFiles.isEmpty()) {
+						publicIncludeFiles.addAll(sharedIncludeFiles)
 					}
-				} else if  (deployableArtifact.artifactType.equals("DatasetMember")) {
-					// set copyMode based on last level qualifier
-					currentCopyMode = copyModeMap[container.replaceAll(/.*\.([^.]*)/, "\$1")]
-					if (currentCopyMode != null) {
-						if (ZFile.exists("//'$container(${deployableArtifact.file})'")) {
-							// Copy outputs to HFS
-							CopyToHFS copy = new CopyToHFS()
-							copy.setCopyMode(DBBConstants.CopyMode.valueOf(currentCopyMode))
-							copy.setDataset(container)
-		
-							println "\tCopy '$container(${deployableArtifact.file})' to '$tempLoadDir/$relativeFilePath/$fileName' with DBB Copymode '$currentCopyMode'"
-							copy.dataset(container).member(deployableArtifact.file).file(file).execute()
-		
-							// Tagging binary files
-							if (currentCopyMode == CopyMode.BINARY || currentCopyMode == CopyMode.LOAD) {
-								StringBuffer stdout = new StringBuffer()
-								StringBuffer stderr = new StringBuffer()
-								Process process = "chtag -b $file".execute()
-								process.waitForProcessOutput(stdout, stderr)
-								if (stderr){
-									println ("*! stderr : $stderr")
-									println ("*! stdout : $stdout")
-								}
+					
+					println("*** Number of public source code interfaces to package: ${publicIncludeFiles.size()}")
+					println("** Copy all public source code interfaces from application repository to temporary package directory '$tempLoadDir'")
+					
+					publicIncludeFiles.forEach() { includeFile ->
+						Path includeFilePath = Paths.get("${props.applicationFolderPath}/${includeFile}")
+						Path targetIncludeFilePath = Paths.get("${tempLoadDir.getPath()}/${includeSubfolder}/src/${includeFilePath.getFileName()}")
+						if (props.verbose) println("\tCopy '${includeFilePath}' file to '${targetIncludeFilePath}'")
+						try {
+							//Create target parent folder if it doesn't exist
+							def targetIncludeFilesFolder = targetIncludeFilePath.getParent().toFile()
+							if (!targetIncludeFilesFolder.exists()) {
+								targetIncludeFilesFolder.mkdirs()
 							}
-		
-							// Append record to Wazi Deploy Application Manifest
-							if (wdManifestGeneratorUtilities && props.generateWaziDeployAppManifest && props.generateWaziDeployAppManifest.toBoolean()) {
-									wdManifestGeneratorUtilities.appendArtifactToManifest(deployableArtifact, "$relativeFilePath/$fileName", record, dependencySetRecord, propertiesRecord)
-							}
-		
-						} else {
-							println "*! [ERROR] Copy failed: The file '$container(${deployableArtifact.file})' doesn't exist."
-							rc = Math.max(rc, 1) 
+							Files.copy(includeFilePath, targetIncludeFilePath, COPY_ATTRIBUTES, REPLACE_EXISTING)
+						} catch (IOException exception) {
+							println "!* [ERROR] Copy failed: an error occurred when copying '${includeFilePath}' to '${targetIncludeFilePath}'"
+							rc = Math.max(rc, 1)
 						}
-					} else {
-						println "*! [ERROR] Copy failed: The file '$container(${deployableArtifact.file})' could not be copied due to missing mapping."
-						rc = Math.max(rc, 1) 
 					}
-				} else if  (deployableArtifact.artifactType.equals("DatasetMemberDelete")) {
-						// generate delete instruction for Wazi Deploy
-						if (wdManifestGeneratorUtilities && props.generateWaziDeployAppManifest && props.generateWaziDeployAppManifest.toBoolean()) {
-							wdManifestGeneratorUtilities.appendArtifactDeletionToManifest(deployableArtifact, "$relativeFilePath/$fileName", record, propertiesRecord)
-						}
 				}
 
-
-				if (props.generateSBOM && props.generateSBOM.toBoolean() && rc == 0) {
-					sbomUtilities.addEntryToSBOM(deployableArtifact, info)
+			} else {
+				// grouping of build outputs for shared and generated source only available via Application Descriptor
+				skippedDeployableOutputs = buildOutputsMap.findAll { deployableArtifact, info ->
+					(generated.contains(deployableArtifact.deployType) || shared.contains(deployableArtifact.deployType))
+				}
+				if (skippedDeployableOutputs) {
+					println("** Number of skipped build outputs: ${skippedDeployableOutputs.size()}")
 				}
 			}
+
 		}
 		
 		if (props.generateSBOM && props.generateSBOM.toBoolean() && rc == 0) {
@@ -624,33 +609,6 @@ if (rc == 0) {
 			if (props.verbose) println("** Copy packaging properties config file to '$copiedPackagingPropertiesFilePath'")
 			Files.copy(packagingPropertiesFilePath, copiedPackagingPropertiesFilePath, COPY_ATTRIBUTES, REPLACE_EXISTING)
 	
-			if (applicationDescriptor) {
-				ArrayList<String> publicIncludeFiles = applicationDescriptorUtils.getFilesByTypeAndUsage(applicationDescriptor, "Include File", "public")
-				ArrayList<String> sharedIncludeFiles = applicationDescriptorUtils.getFilesByTypeAndUsage(applicationDescriptor, "Include File", "shared")
-				if (publicIncludeFiles && !publicIncludeFiles.isEmpty()) {
-					if (sharedIncludeFiles && !sharedIncludeFiles.isEmpty()) {
-						publicIncludeFiles.addAll(sharedIncludeFiles)
-					}
-					publicIncludeFiles.forEach() { includeFile ->
-						Path includeFilePath = Paths.get("${props.applicationFolderPath}/${includeFile}")
-						Path targetIncludeFilePath = Paths.get("${tempLoadDir.getPath()}/${includeSubfolder}/src/${includeFilePath.getFileName()}")
-						if (props.verbose) println("** Copy '${includeFilePath}' file to '${targetIncludeFilePath}'")
-						try {
-							//Create target parent folder if it doesn't exist
-							def targetIncludeFilesFolder = targetIncludeFilePath.getParent().toFile()
-							if (!targetIncludeFilesFolder.exists()) {
-								targetIncludeFilesFolder.mkdirs()
-							}								
-							Files.copy(includeFilePath, targetIncludeFilePath, COPY_ATTRIBUTES, REPLACE_EXISTING)
-						} catch (IOException exception) {
-							println "!* [ERROR] Copy failed: an error occurred when copying '${includeFilePath}' to '${targetIncludeFilePath}'"
-							rc = Math.max(rc, 1) 
-						}
-					}
-				}
-				// Checks if all binary interfaces (submodules) are in the archive or not
-				checkBinaryInterfaces(tempLoadDir, applicationDescriptor)
-			}
 			
 			if (props.owner) {
 				def processCmd = [
@@ -750,6 +708,106 @@ if (rc > 0) {
 	println ("** Packaging completed successfully.")
 }
 System.exit(rc)
+
+/**
+ * 
+ */
+
+def copyArtifactsToUSS(Map<DeployableArtifact, Map> buildOutputsMap, String tarSubfolder) {
+	// local variables 
+	def copyModeMap = parseCopyModeMap(props.copyModeMap) // Map of last level dataset qualifier to DBB CopyToHFS CopyMode.
+	
+	buildOutputsMap.each { deployableArtifact, info ->
+		String container = info.get("container")
+		String owningApplication = info.get("owningApplication")
+		Record record = info.get("record")
+		PropertiesRecord propertiesRecord = info.get("propertiesRecord")
+		DependencySetRecord dependencySetRecord = info.get("dependencySetRecord")
+		
+		def relativeFilePath = ""
+		if (deployableArtifact.artifactType.equals("zFSFile")) {
+				relativeFilePath = "$binSubfolder/uss"
+		} else {
+				if (deployableArtifact.deployType.equals("OBJ")) {
+					relativeFilePath = "$tarSubfolder/bin"
+				} else {
+					relativeFilePath = "$tarSubfolder/${deployableArtifact.deployType}"
+				}
+		}
+
+		// define file name in USS
+		def fileName = deployableArtifact.file
+
+		// add deployType to file name
+		if (props.addExtension && props.addExtension.toBoolean()) {
+			fileName = fileName + '.' + deployableArtifact.deployType
+		}
+		def file = new File("$tempLoadDir/$relativeFilePath/$fileName")
+
+		def (directory, relativeFileName) = extractDirectoryAndFile(file.toPath().toString())
+		new File(directory).mkdirs()
+
+
+		if (deployableArtifact.artifactType.equals("zFSFile")) {
+			def originalFile = new File(container + "/" + deployableArtifact.file)
+			println "\tCopy '${originalFile.toPath()}' to '${file.toPath()}'"
+			try {
+				Files.copy(originalFile.toPath(), file.toPath(), StandardCopyOption.COPY_ATTRIBUTES);
+			} catch (IOException exception) {
+				println "!* [ERROR] Copy failed: an error occurred when copying '${originalFile.toPath()}' to '${file.toPath()}'"
+				rc = Math.max(rc, 1)
+			}
+		} else if  (deployableArtifact.artifactType.equals("DatasetMember")) {
+			// set copyMode based on last level qualifier
+			currentCopyMode = copyModeMap[container.replaceAll(/.*\.([^.]*)/, "\$1")]
+			if (currentCopyMode != null) {
+				if (ZFile.exists("//'$container(${deployableArtifact.file})'")) {
+					// Copy outputs to HFS
+					CopyToHFS copy = new CopyToHFS()
+					copy.setCopyMode(DBBConstants.CopyMode.valueOf(currentCopyMode))
+					copy.setDataset(container)
+
+					println "\tCopy '$container(${deployableArtifact.file})' to '$tempLoadDir/$relativeFilePath/$fileName' with DBB Copymode '$currentCopyMode'"
+					copy.dataset(container).member(deployableArtifact.file).file(file).execute()
+
+					// Tagging binary files
+					if (currentCopyMode == CopyMode.BINARY || currentCopyMode == CopyMode.LOAD) {
+						StringBuffer stdout = new StringBuffer()
+						StringBuffer stderr = new StringBuffer()
+						Process process = "chtag -b $file".execute()
+						process.waitForProcessOutput(stdout, stderr)
+						if (stderr){
+							println ("*! stderr : $stderr")
+							println ("*! stdout : $stdout")
+						}
+					}
+
+					// Append record to Wazi Deploy Application Manifest
+					if (wdManifestGeneratorUtilities && props.generateWaziDeployAppManifest && props.generateWaziDeployAppManifest.toBoolean()) {
+							wdManifestGeneratorUtilities.appendArtifactToManifest(deployableArtifact, "$relativeFilePath/$fileName", record, dependencySetRecord, propertiesRecord)
+					}
+
+				} else {
+					println "*! [ERROR] Copy failed: The file '$container(${deployableArtifact.file})' doesn't exist."
+					rc = Math.max(rc, 1)
+				}
+			} else {
+				println "*! [ERROR] Copy failed: The file '$container(${deployableArtifact.file})' could not be copied due to missing mapping."
+				rc = Math.max(rc, 1)
+			}
+		} else if  (deployableArtifact.artifactType.equals("DatasetMemberDelete")) {
+				// generate delete instruction for Wazi Deploy
+				if (wdManifestGeneratorUtilities && props.generateWaziDeployAppManifest && props.generateWaziDeployAppManifest.toBoolean()) {
+					wdManifestGeneratorUtilities.appendArtifactDeletionToManifest(deployableArtifact, "$relativeFilePath/$fileName", record, propertiesRecord)
+				}
+		}
+
+
+		if (props.generateSBOM && props.generateSBOM.toBoolean() && rc == 0) {
+			sbomUtilities.addEntryToSBOM(deployableArtifact, info)
+		}
+	}
+}
 
 /**
  * parse data set name and member name
@@ -1054,17 +1112,21 @@ def checkBinaryInterfaces(File tempLoadDir, applicationDescriptor) {
 	if (binaryInternalInterfaces) {
 		binaryInterfaces.addAll(binaryInternalInterfaces)
 	}
-	ArrayList<String> missingBinaryInterfaces = new ArrayList<String>() 
+	
 	binaryInterfaces.each { binaryInterface ->
 		String sourceFileName = Paths.get(binaryInterface).getFileName().toString()
-		String expectedFileName = "$includeSubfolder/bin/" + sourceFileName.split("\\.")[0].toUpperCase() + ".OBJ"
+		String member = sourceFileName.split("\\.")[0].toUpperCase()
+		
+		// shared
+		String expectedFileName = "$includeSubfolder/bin/" + member + ".OBJ"
 		File expectedInterface = new File("${tempLoadDir.getAbsolutePath()}/$expectedFileName")
-		if (!expectedInterface.exists()) {
-			missingBinaryInterfaces.add(expectedFileName)
+		// private
+		String expectedFileNamePrivate = "$internalSubfolder/bin/" + member + ".OBJ"
+		File expectedInterfacePrivate = new File("${tempLoadDir.getAbsolutePath()}/$expectedFileNamePrivate")
+		
+		if (!(expectedInterface.exists() || expectedInterfacePrivate.exists())) { //  not found
+			println("*! [WARNING] Binary interface for $member not found in interface folders. Tar not exposing all interfaces.")
 		}
-	}
-	if (missingBinaryInterfaces.size() > 0) {
-		println("*! [WARNING] Some binary interfaces are missing in the current archive: ${missingBinaryInterfaces}.")
 	}
 }
 
