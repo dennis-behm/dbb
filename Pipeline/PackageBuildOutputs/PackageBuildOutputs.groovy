@@ -711,7 +711,8 @@ if (rc == 0) {
 			GroovyObject artifactRepositoryHelpers = (GroovyObject) artifactRepositoryHelpersClass.newInstance()
 	
 			println ("** Upload package to Artifact Repository '$url'.")
-			artifactRepositoryHelpers.upload(url, tarFile as String, user, password, props.verbose.toBoolean(), httpClientVersion)
+			def tracing = (props.verbose && props.verbose.toBoolean()) ? true : false 
+			artifactRepositoryHelpers.upload(url, tarFile as String, user, password, tracing, httpClientVersion)
 		}
 	}
 }
