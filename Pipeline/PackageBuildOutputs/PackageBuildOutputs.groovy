@@ -98,7 +98,8 @@ BuildProperties.setProperty("dbb.file.tagging", "true") // Enable dbb file taggi
 Map<DeployableArtifact, Map> buildOutputsMap = new HashMap<DeployableArtifact, Map>()
 
 // Field to store default tarFileLabel (buildInfo.label) when cli argument tarFileName is not passed.
-def String tarFileLabel = "Default"
+@Field def String tarFileLabel = "Default"
+@Field def String tarFileName = ""
 
 // Object to store scm information for Wazi Deploy Application Manifest file
 HashMap<String,String> scmInfo = new HashMap<String, String>()
@@ -364,6 +365,8 @@ props.buildReportOrder.each { buildReportFile ->
 				scmInfo.put("uri", "multipleBuildReports")
 			}
 		}
+		
+		
 	}
 }
 
@@ -378,8 +381,17 @@ if (rc == 0) {
 		if (props.generateWaziDeployAppManifest && props.generateWaziDeployAppManifest.toBoolean()) {
 			wdManifestGeneratorUtilities.initWaziDeployManifestGenerator(props)// Wazi Deploy Application Manifest
 			wdManifestGeneratorUtilities.setScmInfo(scmInfo)
+			if (props.externalDependenciesEvidences) {
+				File externalDependenciesEvidenceFile = new File("${props.externalDependenciesEvidences}")
+				if (externalDependenciesEvidenceFile.exists()){
+					wdManifestGeneratorUtilities.setExternalDependencies(externalDependenciesEvidenceFile)
+				} else {
+					println("** External build dependencies file not found (${props.externalDependenciesEvidences}). Exiting.")
+					rc=4
+				}	
+			}
 		}
-		def String tarFileName = (props.tarFileName) ? props.tarFileName  : "${tarFileLabel}.tar"
+		tarFileName = (props.tarFileName) ? props.tarFileName  : "${tarFileLabel}.tar"
 		def tarFile = "$props.workDir/${tarFileName}"
 	
 		//Create a temporary directory on zFS to copy the load modules from data sets to
@@ -574,10 +586,21 @@ if (rc == 0) {
 			sbomUtilities.writeSBOM("$tempLoadDir/sbom.json", props.fileEncoding)    
 		}
 		
+		if (wdManifestGeneratorUtilities && props.generateWaziDeployAppManifest && props.generateWaziDeployAppManifest.toBoolean() && props.publish && props.publish.toBoolean() && rc == 0) {
+			HashMap<String,String> packageInfo = new HashMap<String, String>()
+			packageInfo.put("type", "artifactRepository")
+			packageInfo.put("name", props.versionName)
+			
+			packageUrl = computeAbsoluteRepositoryUrl()
+			if (packageUrl) packageInfo.put("uri", packageUrl)
+			
+			wdManifestGeneratorUtilities.setPackageInfo(packageInfo)
+		}
+		
 	
 		if (wdManifestGeneratorUtilities && props.generateWaziDeployAppManifest && props.generateWaziDeployAppManifest.toBoolean() && rc == 0) {
 			// print application manifest
-			// wazideploy_manifest.yml is the default name of the manifest file
+			// wazideploy_manifest.yml is the default name of the manifest file		
 			wdManifestGeneratorUtilities.writeApplicationManifest(new File("$tempLoadDir/wazideploy_manifest.yml"), props.fileEncoding, props.verbose)
 		}
 	
@@ -696,8 +719,7 @@ if (rc == 0) {
 		//Set up the artifact repository information to publish the tar file
 		if (props.publish && props.publish.toBoolean() && rc == 0){
 			// Configuring artifact repositoryHelper parms
-			def String remotePath = (props.versionName) ? (props.versionName + "/" + tarFileName) : (tarFileLabel + "/" + tarFileName)
-			def url = new URI(props.get('artifactRepository.url') + "/" + props.get('artifactRepository.repo') + "/" + (props.get('artifactRepository.directory') ? "${props.get('artifactRepository.directory')}/" : "") + remotePath).normalize().toString() // Normalized URL
+			def url = computeAbsoluteRepositoryUrl()
 	
 			def apiKey = props.'artifactRepository.user'
 			def user = props.'artifactRepository.user'
@@ -896,6 +918,7 @@ def parseInput(String[] cliArgs){
 
 	// Wazi Deploy Application Manifest generation
 	cli.wd(longOpt:'generateWaziDeployAppManifest', 'Flag indicating to generate and add the Wazi Deploy Application Manifest file.')
+	cli.ed(longOpt:'externalDependenciesEvidences', args:1, argName:'externalDependenciesEvidences', 'File documenting the external dependencies that were provided to the build phase.')
 	
 	// Artifact repository options ::
 	cli.p(longOpt:'publish', 'Flag to indicate package upload to the provided Artifact Repository server. (Optional)')
@@ -971,6 +994,9 @@ def parseInput(String[] cliArgs){
 		props.applicationFolderPath = opts.af
 		if (opts.bp) props.baselinePackageFilePath = opts.bp
 	}
+
+	// Track retrieved external dependencies
+	if (opts.ed) props.externalDependenciesEvidences = opts.ed
 
 	// default log encoding if not specified via config passed in via --properties
 	if (!props.fileEncoding) props.fileEncoding = "IBM-1047"
@@ -1108,6 +1134,15 @@ def parseCopyModeMap(String copyModeMapString) {
 		copyModeMap.put(copyModeParts[0].trim(), copyModeParts[1].trim())
 	}
 	return copyModeMap
+}
+
+/*
+ * build package url 
+ */
+def computeAbsoluteRepositoryUrl() {
+	def String remotePath = (props.versionName) ? (props.versionName + "/" + tarFileName) : (tarFileLabel + "/" + tarFileName)
+	def url = new URI(props.get('artifactRepository.url') + "/" + props.get('artifactRepository.repo') + "/" + (props.get('artifactRepository.directory') ? "${props.get('artifactRepository.directory')}/" : "") + remotePath).normalize().toString() // Normalized URL
+	return url
 }
 
 /*
