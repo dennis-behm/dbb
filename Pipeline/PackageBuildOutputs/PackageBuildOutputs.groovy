@@ -740,7 +740,7 @@ if (rc == 0) {
                            }
                       }
 			if (rc == 0) {
-				println("** Create tar file at ${tarFile}")
+				/**println("** Create tar file at ${tarFile}")
 				// Note: https://www.ibm.com/docs/en/zos/2.4.0?topic=scd-tar-manipulate-tar-archive-files-copy-back-up-file
 				// To save all attributes to be restored on z/OS and non-z/OS systems : tar -UX
 				def processCmd = [
@@ -748,13 +748,24 @@ if (rc == 0) {
 					"-c",
 					"tar cUXf $tarFile *"
 				]
+				*/
+
+				println("** List temp package dir ${tempLoadDir}")
+				// Note: https://www.ibm.com/docs/en/zos/2.4.0?topic=scd-tar-manipulate-tar-archive-files-copy-back-up-file
+				// To save all attributes to be restored on z/OS and non-z/OS systems : tar -UX
+				def processCmd = [
+					"sh",
+					"-c",
+					"ls -lisaTR *"
+				]
+
 
 				def processRC = runProcess(processCmd, tempLoadDir)
 				rc = Math.max(rc, processRC)
 				if (rc == 0) {
-					println("** Package '${tarFile}' successfully created.")
+					println("** Package dir '${tempLoadDir}' successfully prepared.")
 				} else {
-					println("*! [ERROR] Error when creating Package '${tarFile}' with rc=$rc.")
+					println("*! [ERROR] Error when preparing Package dir '${tempLoadDir}' with rc=$rc.")
 				}
 			}
 		}
@@ -787,7 +798,34 @@ if (rc == 0) {
 			def httpClientVersion = props.'artifactRepository.httpClientVersion'
 			def repo = props.get('artifactRepository.repo') as String
 			println ("** Upload package to Artifact Repository '$url'.")
-			rc = artifactRepositoryHelpers.upload(url, tarFile as String, user, password, props.verbose.toBoolean(), httpClientVersion)
+
+
+			def manifestVersion = props.get('tarFileName').replaceAll(".tar","").replaceAll("${props.application}-","")
+
+			cmdString = "wazideploy-package --configFile /var/WaziDeploy/config/nexusConfig.yml --repository ${props.'artifactRepository.repo'} --repositoryPath ${props.'artifactRepository.directory'}/${props.versionName} --uploadType archive --manifestName ${props.application} --manifestVersion ${manifestVersion} --manifest ${tempLoadDir}/wazideploy_manifest.yml --localFolder ${tempLoadDir}"
+
+			println("**[INFO] ${cmdString}")
+
+
+			println("** Execute Wazi-Deploy Packaging on ${tempLoadDir}")
+			def processCmd = [
+				"sh",
+				"-c",
+				"${cmdString}"
+			]
+
+			
+
+
+			def processRC = runProcess(processCmd, tempLoadDir)
+			rc = Math.max(rc, processRC)
+			if (rc == 0) {
+				println("** Wazi Deploy Packager cmd for '${tempLoadDir}' completed.")
+			} else {
+				println("*! [ERROR] Wazi Deploy Packager cmd for '${tempLoadDir}' failed with rc=$rc.")
+			}
+
+			//rc = artifactRepositoryHelpers.upload(url, tarFile as String, user, password, props.verbose.toBoolean(), httpClientVersion)
 
 			// generate PackageInfo for Concert Manifest file
 			if (props.generateConcertBuildManifest && props.generateConcertBuildManifest.toBoolean()) {

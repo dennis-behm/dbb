@@ -497,9 +497,27 @@ if [ $rc -eq 0 ] && [ "$publish" == "true" ] && [ ! -z "${buildIdentifier}" ]; t
 
     # Call utilities method
     computeArchiveInformation
-
+    #set -x
     # Set Input and output files for Wazi Deploy
     PackageInputFile="${artifactRepositoryAbsoluteUrl}"
+    
+    # Wazi Deploy Packager fix 
+    
+    # Extract the filename from the URL
+    filename=$(basename "$PackageInputFile")
+
+    # Extract the directory path (everything before the filename)
+    base_path=$(dirname "$artifactRepositoryAbsoluteUrl")
+
+    # Extract the pattern from the filename (assuming it starts after $App ex. 'base-')
+    pattern=$(echo "$filename" | awk -F"${App}-|\\.tar" '{print $2}')
+
+    # Construct the new URL by inserting the pattern as a new path segment
+    PackageInputFile="${base_path}/${pattern}/${filename}"
+
+    # Output the new URL
+    echo "Update PIF: $PackageInputFile"
+    
     PackageOutputFile="$(wdDeployPackageDir)/applicationArchive.tar" # shared convention with wazideploy-deploy.sh
     usePackageUrl="true"
   fi
