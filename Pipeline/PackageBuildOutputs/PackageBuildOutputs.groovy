@@ -802,7 +802,7 @@ if (rc == 0) {
 
 			def manifestVersion = props.get('tarFileName').replaceAll(".tar","").replaceAll("${props.application}-","")
 
-			cmdString = "wazideploy-package --configFile /var/WaziDeploy/config/nexusConfig.yml --repository ${props.'artifactRepository.repo'} --repositoryPath ${props.'artifactRepository.directory'}/${props.versionName} --uploadType archive --manifestName ${props.application} --manifestVersion ${manifestVersion} --manifest ${tempLoadDir}/wazideploy_manifest.yml --localFolder ${tempLoadDir}"
+			cmdString = "wazideploy-package --configFile /var/WaziDeploy/config/nexusConfig.yml --repository ${props.'artifactRepository.repo'} --repositoryPath ${props.'artifactRepository.directory'} --uploadType archive --manifestName ${props.application} --manifestVersion ${props.versionName} --manifest ${tempLoadDir}/wazideploy_manifest.yml --localFolder ${tempLoadDir} --archiveName ${tarFileName}"
 
 			println("**[INFO] ${cmdString}")
 
