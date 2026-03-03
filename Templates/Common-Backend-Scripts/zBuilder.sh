@@ -206,6 +206,12 @@ if [ $rc -eq 0 ]; then
         source $buildUtilities
     fi
 
+    # Initialize audit logging if enabled
+    auditLoggerUtilities="${SCRIPT_HOME}/utilities/auditLogger.sh"
+    if [ "${auditLogEnabled}" = "true" ] && [ -f "${auditLoggerUtilities}" ]; then
+        source $auditLoggerUtilities
+    fi
+
   # Read and import utilities
   if [ ! -f "${fetchBuildDependenciesUtilities}" ]; then
     rc=8
@@ -428,6 +434,11 @@ if [ $rc -eq 0 ]; then
     validateOptions
 fi
 
+# Log audit start after options are validated
+if [ $rc -eq 0 ] && [ "${auditLogEnabled}" = "true" ]; then
+    logAuditStart "${App}" "${Workspace}" "${Branch}" "${PipelineType}"
+fi
+
 # Call utilities to compute build Lifecycle based on pipeline
 if [ $rc -eq 0 ]; then
     ##DEBUG## echo $PGM": [DEBUG] **************************************************************"
@@ -510,8 +521,15 @@ if [ $rc -eq 0 ]; then
     fi
 
     echo $PGM": [INFO] ${CMD}"
-    ${CMD}
-    rc=$?
+    
+    # Execute with performance timing if audit logging is enabled
+    if [ "${auditLogEnabled}" = "true" ]; then
+        wrapCommandWithTiming "${CMD}"
+        rc=$?
+    else
+        ${CMD}
+        rc=$?
+    fi
 
     if [ $rc -eq 0 ]; then
         cp ${zBuilderLogDir}/* ${outDir}
@@ -553,6 +571,11 @@ if [ $rc -eq 0 ]; then
         echo $ERRMSG
         rc=8
     fi
+fi
+
+# Log audit end with metrics before exit
+if [ "${auditLogEnabled}" = "true" ]; then
+    logAuditEnd "${App}" "${Workspace}" $rc
 fi
 
 exit $rc
