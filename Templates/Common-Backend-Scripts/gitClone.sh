@@ -27,9 +27,10 @@
 #
 # Date       Who Vers  Description
 # ---------- --- ----- --------------------------------------------------------------
-# 2023/07/06 TLD 1.0.0 Initial Release
-# 2023/09/25 DB  1.1.0 Initial Release
-# 2024/03/01 DB  1.2.0 Updated Error Handling
+# 2023/07/06 TLD 1.00 Initial Release
+# 2023/09/25 DB  1.10 Initial Release
+# 2024/03/01 DB  1.20 Updated Error Handling
+# 2026/03/03 DB  1.30 Added audit and performance logging
 #===================================================================================
 
 Help() {
@@ -92,7 +93,7 @@ pipelineConfiguration="${SCRIPT_HOME}/pipelineBackend.config"
 #export BASH_XTRACEFD=1  # Write set -x trace to file descriptor
 
 PGM=$(basename "$0")
-PGMVERS="1.2.0"
+PGMVERS="1.30"
 USER=$(whoami)
 SYS=$(uname -Ia)
 
@@ -130,6 +131,12 @@ if [ $rc -eq 0 ]; then
     echo $ERRMSG
   else
     source $pipelineConfiguration
+  fi
+
+  # Initialize audit logging if enabled
+  auditLoggerUtilities="${SCRIPT_HOME}/utilities/auditLogger.sh"
+  if [ "${auditLogEnabled}" = "true" ] && [ -f "${auditLoggerUtilities}" ]; then
+    source $auditLoggerUtilities
   fi
 fi
 
@@ -239,6 +246,11 @@ validateOptions(){
 if [ $rc -eq 0 ]; then
   validateOptions
 fi
+
+# Log audit start after options are validated
+if [ $rc -eq 0 ] && [ "${auditLogEnabled}" = "true" ]; then
+  logAuditStart "${application:-${GitDir}}" "${Workspace}" "${Branch}" "clone"
+fi
 #
 
 # Fix up the Branch and Workspace Name
@@ -310,8 +322,15 @@ if [ $rc -eq 0 ]; then
   fi
 
   echo $PGM": [INFO] ${CMD}"
-  ${CMD} 2>&1
-  rc=$?
+  
+  # Execute with performance timing if audit logging is enabled
+  if [ "${auditLogEnabled}" = "true" ]; then
+    wrapCommandWithTiming "${CMD} 2>&1"
+    rc=$?
+  else
+    ${CMD} 2>&1
+    rc=$?
+  fi
 
   if [ $rc -ne 0 ]; then
     ERRMSG=$PGM": [ERROR] Unable to Clone Repo ${Repo}, Ref ${BranchID}. rc="$rc
@@ -366,6 +385,11 @@ if [ $rc -eq 0 ]; then
 else 
   ERRMSG=$PGM": [ERROR] Clone Repository Failed. Check Log. rc="$rc
   echo $ERRMSG
+fi
+
+# Log audit end with metrics before exit
+if [ "${auditLogEnabled}" = "true" ]; then
+  logAuditEnd "${application:-${GitDir}}" "${Workspace}" $rc
 fi
 
 exit $rc

@@ -29,6 +29,7 @@
 # Date       Who  Vers Description
 # ---------- ---- ---- --------------------------------------------------------------
 # 2025/09/10 DB   1.20 Passing wdPackageBuildIdentifier to packaging script
+# 2026/03/03 DB   1.30 Added audit and performance logging
 #===================================================================================
 Help() {
     echo $PGM" - Invoke Package Build Outputs ("$PGMVERS")              "
@@ -136,7 +137,7 @@ packagingUtilities="${SCRIPT_HOME}/utilities/packagingUtilities.sh"
 #export BASH_XTRACEFD=1  # Write set -x trace to file descriptor
 
 PGM=$(basename "$0")
-PGMVERS="1.20"
+PGMVERS="1.30"
 USER=$(whoami)
 SYS=$(uname -Ia)
 
@@ -202,6 +203,12 @@ if [ $rc -eq 0 ]; then
         echo $ERRMSG
     else
         source $pipelineConfiguration
+    fi
+
+    # Initialize audit logging if enabled
+    auditLoggerUtilities="${SCRIPT_HOME}/utilities/auditLogger.sh"
+    if [ "${auditLogEnabled}" = "true" ] && [ -f "${auditLoggerUtilities}" ]; then
+        source $auditLoggerUtilities
     fi
 fi
 
@@ -545,6 +552,11 @@ if [ $rc -eq 0 ]; then
     validateOptions
 fi
 
+# Log audit start after options are validated
+if [ $rc -eq 0 ] && [ "${auditLogEnabled}" = "true" ]; then
+    logAuditStart "${App}" "${Workspace}" "${Branch}" "${PipelineType:-package}"
+fi
+
 #
 # Ready to go
 if [ $rc -eq 0 ]; then
@@ -711,8 +723,15 @@ if [ $rc -eq 0 ]; then
     fi
 
     echo $PGM": [INFO] ${CMD}"
-    ${CMD}
-    rc=$?
+    
+    # Execute with performance timing if audit logging is enabled
+    if [ "${auditLogEnabled}" = "true" ]; then
+        wrapCommandWithTiming "${CMD}"
+        rc=$?
+    else
+        ${CMD}
+        rc=$?
+    fi
 
     if [ $rc -eq 0 ]; then
         ERRMSG=$PGM": [INFO] Package Build Outputs Complete. rc="$rc
@@ -722,6 +741,11 @@ if [ $rc -eq 0 ]; then
         echo $ERRMSG
         rc=12
     fi
+fi
+
+# Log audit end with metrics before exit
+if [ "${auditLogEnabled}" = "true" ]; then
+    logAuditEnd "${App}" "${Workspace}" $rc
 fi
 
 exit $rc

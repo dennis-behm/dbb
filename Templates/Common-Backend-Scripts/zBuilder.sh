@@ -45,6 +45,7 @@
 # Date       Who Vers  Description
 # ---------- --- ----- --------------------------------------------------------------
 # 2024/12/12 DB  1.0.0 Initial Release
+# 2026/03/03 DB  1.1.0 Added audit and performance logging
 #===================================================================================
 Help() {
     echo $PGM" - Invoke DBB zBuilder ("$PGMVERS")                       "
@@ -138,7 +139,7 @@ fetchBuildDependenciesUtilities="${SCRIPT_HOME}/utilities/fetchBuildDependencies
 #export BASH_XTRACEFD=1  # Write set -x trace to file descriptor
 
 PGM=$(basename "$0")
-PGMVERS="1.10"
+PGMVERS="1.1.0"
 USER=$USER
 SYS=$(uname -Ia)
 

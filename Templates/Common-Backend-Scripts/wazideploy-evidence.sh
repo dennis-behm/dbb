@@ -30,6 +30,7 @@
 # 2023/11/29 DB   1.10 Fixes to relative workspace directory
 # 2025/07/24 DB   1.20 Use default query and report renderer
 # 2025/08/14 DB   1.21 Fixes - query and report renderer
+# 2026/03/03 DB   1.30 Added audit and performance logging
 #===================================================================================
 Help() {
     echo $PGM" - Generate deployment reports with Wazi Deploy                       "
@@ -104,7 +105,7 @@ pipelineConfiguration="${SCRIPT_HOME}/pipelineBackend.config"
 #export BASH_XTRACEFD=1  # Write set -x trace to file descriptor
 
 PGM=$(basename "$0")
-PGMVERS="1.10"
+PGMVERS="1.30"
 USER=$(whoami)
 SYS=$(uname -Ia)
 
@@ -141,6 +142,12 @@ if [ $rc -eq 0 ]; then
         echo $ERRMSG
     else
         source $pipelineConfiguration
+    fi
+
+    # Initialize audit logging if enabled
+    auditLoggerUtilities="${SCRIPT_HOME}/utilities/auditLogger.sh"
+    if [ "${auditLogEnabled}" = "true" ] && [ -f "${auditLoggerUtilities}" ]; then
+        source $auditLoggerUtilities
     fi
 fi
 
@@ -279,6 +286,11 @@ if [ $rc -eq 0 ]; then
     validateOptions
 fi
 
+# Log audit start after options are validated
+if [ $rc -eq 0 ] && [ "${auditLogEnabled}" = "true" ]; then
+    logAuditStart "WaziDeploy" "${Workspace}" "evidence" "evidence"
+fi
+
 #
 # Set up Environment
 if [ $rc -eq 0 ]; then
@@ -318,14 +330,26 @@ if [ $rc -eq 0 ]; then
     CommandLine="wazideploy-evidence --dataFolder ${EvidenceFolder} --index ${Workspace}/${wdIndexFolder} --query ${wdQueryTemplate} --output=${OutputFile} ir renderer_name=${wdReportRenderer}"     
      
     echo ${CommandLine} 2>&1
-    ${CommandLine} 2>&1
-    rc=$?
+    
+    # Execute with performance timing if audit logging is enabled
+    if [ "${auditLogEnabled}" = "true" ]; then
+        wrapCommandWithTiming "${CommandLine} 2>&1"
+        rc=$?
+    else
+        ${CommandLine} 2>&1
+        rc=$?
+    fi
 
     if [ $rc -ne 0 ]; then
         ERRMSG=$PGM": [ERROR] Wazi Deploy Evidence command failed. rc="$rc
         echo $ERRMSG
     fi
 
+fi
+
+# Log audit end with metrics before exit
+if [ "${auditLogEnabled}" = "true" ]; then
+    logAuditEnd "WaziDeploy" "${Workspace}" $rc
 fi
 
 exit $rc

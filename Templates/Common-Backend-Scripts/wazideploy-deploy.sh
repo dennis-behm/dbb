@@ -29,6 +29,7 @@
 # 2023/10/19 MDLB 1.00 Initial Release
 # 2023/11/29 DB   1.10 Fixes to relative workspace directory
 # 2025/06/25 DB   1.20 Accept extraVars + pass default variables to WD
+# 2026/03/03 DB   1.30 Added audit and performance logging
 #===================================================================================
 Help() {
     echo $PGM" - Deploy a package with Wazi Deploy                                  "
@@ -114,7 +115,7 @@ pipelineConfiguration="${SCRIPT_HOME}/pipelineBackend.config"
 #export BASH_XTRACEFD=1  # Write set -x trace to file descriptor
 
 PGM=$(basename "$0")
-PGMVERS="1.20"
+PGMVERS="1.30"
 USER=$(whoami)
 SYS=$(uname -Ia)
 
@@ -156,6 +157,12 @@ if [ $rc -eq 0 ]; then
         echo $ERRMSG
     else
         source $pipelineConfiguration
+    fi
+
+    # Initialize audit logging if enabled
+    auditLoggerUtilities="${SCRIPT_HOME}/utilities/auditLogger.sh"
+    if [ "${auditLogEnabled}" = "true" ] && [ -f "${auditLoggerUtilities}" ]; then
+        source $auditLoggerUtilities
     fi
 fi
 
@@ -394,6 +401,11 @@ if [ $rc -eq 0 ]; then
     validateOptions
 fi
 
+# Log audit start after options are validated
+if [ $rc -eq 0 ] && [ "${auditLogEnabled}" = "true" ]; then
+    logAuditStart "${App:-WaziDeploy}" "${Workspace}" "deploy" "deploy"
+fi
+
 #
 # Set up Environment
 if [ $rc -eq 0 ]; then
@@ -467,14 +479,26 @@ if [ $rc -eq 0 ]; then
     fi
 
     echo ${CommandLine} 2>&1
-    $CommandLine 2>&1
-    rc=$?
+    
+    # Execute with performance timing if audit logging is enabled
+    if [ "${auditLogEnabled}" = "true" ]; then
+        wrapCommandWithTiming "$CommandLine 2>&1"
+        rc=$?
+    else
+        $CommandLine 2>&1
+        rc=$?
+    fi
 
     if [ $rc -ne 0 ]; then
         ERRMSG=$PGM": [ERROR] Unable to Deploy package with Wazi Deploy. rc="$rc
         echo $ERRMSG
         rc=8
     fi
+fi
+
+# Log audit end with metrics before exit
+if [ "${auditLogEnabled}" = "true" ]; then
+    logAuditEnd "${App:-WaziDeploy}" "${Workspace}" $rc
 fi
 
 exit $rc
