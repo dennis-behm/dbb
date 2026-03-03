@@ -119,7 +119,7 @@ writeAuditLog() {
 # Get current timestamp in ISO 8601 format with timezone
 #
 getTimestamp() {
-    date '+%Y-%m-%dT%H:%M:%S.%3N%z' 2>/dev/null || date '+%Y-%m-%dT%H:%M:%S%z'
+    date '+%Y-%m-%dT%H:%M:%S%z' 2>/dev/null || date '+%Y-%m-%d %H:%M:%S'
 }
 
 #
@@ -169,8 +169,13 @@ logAuditEnd() {
     
     # Calculate elapsed time
     local endTime=$(date +%s)
-    local elapsedSeconds=$((endTime - AUDIT_START_TIME))
-    local elapsedFormatted=$(printf "%dm%02ds" $((elapsedSeconds / 60)) $((elapsedSeconds % 60)))
+    local elapsedSeconds=0
+    if [ -n "${AUDIT_START_TIME}" ]; then
+        elapsedSeconds=$((endTime - AUDIT_START_TIME))
+    fi
+    local elapsedMinutes=$((elapsedSeconds / 60))
+    local elapsedSecs=$((elapsedSeconds % 60))
+    local elapsedFormatted="${elapsedMinutes}m${elapsedSecs}s"
     
     # Read timing information if available
     local timingInfo=""
