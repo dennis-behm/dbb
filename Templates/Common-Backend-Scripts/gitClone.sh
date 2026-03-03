@@ -249,7 +249,7 @@ fi
 
 # Log audit start after options are validated
 if [ $rc -eq 0 ] && [ "${auditLogEnabled}" = "true" ]; then
-  logAuditStart "${application:-${GitDir}}" "${Workspace}" "${Branch}" "clone"
+  logAuditStart "${application:-${GitDir}}" "${Workspace}" "${Branch}"
 fi
 #
 

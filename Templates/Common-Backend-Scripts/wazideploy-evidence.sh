@@ -288,7 +288,7 @@ fi
 
 # Log audit start after options are validated
 if [ $rc -eq 0 ] && [ "${auditLogEnabled}" = "true" ]; then
-    logAuditStart "WaziDeploy" "${Workspace}" "evidence" "evidence"
+    logAuditStart "WaziDeploy" "${Workspace}"
 fi
 
 #

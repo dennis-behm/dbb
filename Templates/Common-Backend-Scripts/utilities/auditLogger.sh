@@ -16,7 +16,7 @@
 #
 # USAGE:
 #   source utilities/auditLogger.sh
-#   logAuditStart "${App}" "${Workspace}" "${Branch}" "${PipelineType}"
+#   logAuditStart "${App}" "${Workspace}" "${Branch}"
 #   wrapCommandWithTiming "${CMD}"
 #   logAuditEnd "${App}" "${Workspace}" $rc
 #
@@ -134,7 +134,6 @@ logAuditStart() {
     local app="${1:-UNKNOWN}"
     local workspace="${2:-UNKNOWN}"
     local branch="${3:-UNKNOWN}"
-    local pipelineType="${4:-UNKNOWN}"
     
     # Initialize if not already done
     if [ -z "${AUDIT_LOG_FILE}" ]; then
@@ -149,7 +148,7 @@ logAuditStart() {
     
     # Build log entry
     local timestamp=$(getTimestamp)
-    local logEntry="${timestamp} | ${AUDIT_PID} | START | ${app} | ${workspace} | ${branch} | ${pipelineType} | User=${USER} Host=${hostname} Script=${PGM:-${0##*/}}"
+    local logEntry="pid:${AUDIT_PID}<START> | time:${timestamp} | application:${app} | workspace:${workspace} | branch:${branch} | user=${USER} | host=${hostname} | task:${PGM:-${0##*/}}"
     
     # Write to log
     writeAuditLog "${logEntry}"
@@ -190,8 +189,8 @@ logAuditEnd() {
     
     # Build log entry
     local timestamp=$(getTimestamp)
-    local logEntry="${timestamp} | ${AUDIT_PID} | END | ${app} | ${workspace} | - | - | RC=${returnCode} ${timingInfo}"
-    
+    local logEntry="pid:${AUDIT_PID}<END> | time:${timestamp} | application:${app} |  workspace:${workspace} | return_code=${returnCode} | time_info:${timingInfo}" | task:${PGM:-${0##*/}}
+
     # Write to log
     writeAuditLog "${logEntry}"
     

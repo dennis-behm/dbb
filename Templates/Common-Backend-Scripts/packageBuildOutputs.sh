@@ -554,7 +554,7 @@ fi
 
 # Log audit start after options are validated
 if [ $rc -eq 0 ] && [ "${auditLogEnabled}" = "true" ]; then
-    logAuditStart "${App}" "${Workspace}" "${Branch}" "${PipelineType:-package}"
+    logAuditStart "${App}" "${Workspace}" "${Branch}"
 fi
 
 #

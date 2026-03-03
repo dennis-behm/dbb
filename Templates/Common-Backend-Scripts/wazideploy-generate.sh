@@ -516,7 +516,7 @@ fi
 
 # Log audit start after options are validated
 if [ $rc -eq 0 ] && [ "${auditLogEnabled}" = "true" ]; then
-  logAuditStart "${App:-WaziDeploy}" "${Workspace}" "${Branch:-${releaseIdentifier}}" "${PipelineType:-generate}"
+  logAuditStart "${App:-WaziDeploy}" "${Workspace}"
 fi
 
 #
