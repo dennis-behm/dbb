@@ -189,7 +189,7 @@ logAuditEnd() {
     
     # Build log entry
     local timestamp=$(getTimestamp)
-    local logEntry="pid:${AUDIT_PID}<END> | time:${timestamp} | application:${app} |  workspace:${workspace} | return_code=${returnCode} | time_info:${timingInfo}" | task:${PGM:-${0##*/}}
+    local logEntry="pid:${AUDIT_PID}<END> | time:${timestamp} | application:${app} |  workspace:${workspace} | return_code=${returnCode} | time_info:${timingInfo} | task:${PGM:-${0##*/}}"
 
     # Write to log
     writeAuditLog "${logEntry}"
