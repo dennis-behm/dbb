@@ -247,12 +247,6 @@ if [ $rc -eq 0 ]; then
   validateOptions
 fi
 
-# Log audit start after options are validated
-if [ $rc -eq 0 ] && [ "${auditLogEnabled}" = "true" ]; then
-  logAuditStart "${application:-${GitDir}}" "${Workspace}" "${Branch}"
-fi
-#
-
 # Fix up the Branch and Workspace Name
 if [ $rc -eq 0 ]; then
 
@@ -262,6 +256,12 @@ if [ $rc -eq 0 ]; then
   # Isolate the Workspace Name from the Repo Name
   GitDir=$(basename ${Repo})
   GitDir=${GitDir%.*}
+fi
+#
+
+# Log audit start after options are validated
+if [ $rc -eq 0 ] && [ "${auditLogEnabled}" = "true" ]; then
+  logAuditStart "${application:-${GitDir}}" "${Workspace}" "${Branch}"
 fi
 #
 

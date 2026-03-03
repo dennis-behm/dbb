@@ -148,7 +148,7 @@ logAuditStart() {
     
     # Build log entry
     local timestamp=$(getTimestamp)
-    local logEntry="pid:${AUDIT_PID}<START> | time:${timestamp} | application:${app} | workspace:${workspace} | branch:${branch} | user=${USER} | host=${hostname} | task:${PGM:-${0##*/}}"
+    local logEntry="pid:${AUDIT_PID}<START> | time:${timestamp} | workspace:${workspace} | application:${app} | branch:${branch} | user=${USER} | host=${hostname} | task:${PGM:-${0##*/}}"
     
     # Write to log
     writeAuditLog "${logEntry}"
@@ -189,7 +189,7 @@ logAuditEnd() {
     
     # Build log entry
     local timestamp=$(getTimestamp)
-    local logEntry="pid:${AUDIT_PID}<END> | time:${timestamp} | application:${app} |  workspace:${workspace} | return_code=${returnCode} | time_info:${timingInfo} | task:${PGM:-${0##*/}}"
+    local logEntry="pid:${AUDIT_PID}<END> | time:${timestamp} | workspace:${workspace} | application:${app} | return_code=${returnCode} | time_info:${timingInfo} | task:${PGM:-${0##*/}}"
 
     # Write to log
     writeAuditLog "${logEntry}"
