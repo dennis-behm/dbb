@@ -1,5 +1,4 @@
 @groovy.transform.BaseScript com.ibm.dbb.groovy.TaskScript baseScript
-import com.ibm.dbb.metadata.MetadataStoreFactory
 import com.ibm.dbb.task.TaskConstants
 import com.ibm.dbb.build.*
 import com.ibm.dbb.build.report.*
@@ -33,7 +32,8 @@ changedFiles.each { file ->
 }
 if (verbose) printFileList(changedFiles)
 
-// b) Files that are on the BUILD_LIST but not on the CHANGED_FILES list (impacted files)
+// Files that are on the BUILD_LIST but not on the CHANGED_FILES list are impacted files
+// document them in generic MetadataRecord in build report
 Set impactedFiles = buildFiles - changedFiles
 println "> Impacted Files (built due to dependencies): ${impactedFiles.size()}"
 impactedFiles.each { file ->
