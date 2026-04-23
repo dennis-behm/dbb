@@ -36,7 +36,6 @@ lifecycles:
 
 tasks:
   - task: ReasonToBuildDocumentation
-    type: task
     script: groovy/documentReasonToBuild.groovy
 ```
 
