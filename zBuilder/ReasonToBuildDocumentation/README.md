@@ -19,7 +19,7 @@ The ReasonToBuildDocumentation custom Groovy task analyzes and documents the rea
 
 ### Integrate with dbb-build.yaml
 
-Add the `ReasonToBuildDocumentation` task to your `dbb-build.yaml` configuration. The task should be placed in the `impact` lifecycle after the build list has been determined but before the actual language builds occur.
+Add the `ReasonToBuildDocumentation` task to your `dbb-build.yaml` configuration. The task should be placed in the `impact` lifecycle after the `Languages` task. The `Languages` task is responsible for populating the `BUILD_LIST` context variable, which is required by this task to document build reasons.
 
 Example `dbb-build.yaml` configuration:
 ```yaml
@@ -30,8 +30,8 @@ lifecycles:
       - ScannerInit
       - MetadataInit
       - ImpactAnalysis
-      - ReasonToBuildDocumentation  # Document build reasons
       - Languages    # Defined in Languages.yaml
+      - ReasonToBuildDocumentation  # Document build reasons
       - Finish
 
 tasks:
@@ -89,11 +89,15 @@ Changed & Built:        2
 
 ## Task Dependencies
 
-This task consumes the following context variables which are populated by the `ImpactAnalysis` task:
-- `CHANGED_FILES`: Set of files that were modified
-- `BUILD_LIST`: Set of files that need to be built
+This task consumes the following context variables:
+- `CHANGED_FILES`: Set of files that were modified (populated by the `ImpactAnalysis` task)
+- `BUILD_LIST`: Set of files that were built (populated by the [Languages](https://www.ibm.com/docs/en/adffz/dbb/3.0.x?topic=index-task-language#build-context-advanced) task)
 
-Therefore, it must run after the `ImpactAnalysis` task executes.
+**Important:** This task must run after both:
+1. The `ImpactAnalysis` task (which populates `CHANGED_FILES`)
+2. The `Languages` task (which populates `BUILD_LIST` with all source files built by executed language configurations)
+
+The `Languages` task is a recommended prerequisite that executes all configured language build tasks and aggregates the built files into the `BUILD_LIST` context variable.
 
 ## Additional Notes
 

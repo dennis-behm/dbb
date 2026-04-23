@@ -19,6 +19,12 @@ boolean verbose = context.getBooleanVariable(TaskConstants.IS_VERBOSE_MODE)
 
 if (verbose) println "> Document reason for building"
 
+// Validate that we have files to process
+if (changedFiles.isEmpty() && buildFiles.isEmpty()) {
+    println "! Warning: No changed files or build files found. Nothing to document."
+    return 0
+}
+
 // Compare the two lists and generate report
 if (verbose) {
     println "=== Build Analysis Report ==="
