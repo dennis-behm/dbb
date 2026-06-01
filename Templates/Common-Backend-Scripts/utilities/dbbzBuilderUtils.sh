@@ -21,8 +21,17 @@ computeBuildConfiguration() {
     ##DEBUG ## echo -e "App name \t: ${App}"
     ##DEBUG ## echo -e "Branch name \t: ${Branch}"
 
-    # Compute HLQ preix and application name
-    HLQ=$(echo ${HLQPrefix}.${App:0:8} | tr '[:lower:]' '[:upper:]' | tr -d '-')
+    # Validate application name (first 8 characters)
+    appNamePrefix="${App:0:8}"
+    if [[ ! "$appNamePrefix" =~ ^[a-zA-Z][a-zA-Z0-9]*$ ]]; then
+        rc=8
+        ERRMSG=$PGM": [ERROR] Application name prefix '${appNamePrefix}' is invalid. It must contain only alphanumeric characters (a-z, A-Z, 0-9) and cannot start with a number. rc="$rc
+        echo $ERRMSG
+        return $rc
+    fi
+
+    # Compute HLQ prefix and application name
+    HLQ=$(echo ${HLQPrefix}.${appNamePrefix} | tr '[:lower:]' '[:upper:]' | tr -d '-')
 
     # Locate the baseline reference file based on the baselineReferenceLocation config in pipelineBackend.config
     baselineReferenceFile="${AppDir}/$baselineReferenceLocation"
