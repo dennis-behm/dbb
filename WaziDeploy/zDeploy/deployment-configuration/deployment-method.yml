@@ -100,6 +100,75 @@ activities:
                 value: csd_update_template
 
   # activity to process DBRMs always first
+  #  * An alternative path to allowing individual member level bind options
+  # 
+  #  * A tag is used to be able to run these actions only and skip others
+  #    in it's own run
+  #  * member_copy is configured to move the DBRM into a temp library first
+  - name: DBRMS2
+    description: |
+      This activity is dedicated to DBRM bind modules and will process DBRM members of the package first using dedicated PDS libraries
+    short_name: DBRMS
+    actions:
+      # Manage deletions of DBRMS
+      - name: DELETE
+        short_name: DELETE
+        description: |
+          This action is applicable when the artifacts are deleted
+        states:
+          - DELETED
+        steps:
+          - name: MEMBER_ARCHIVE
+            short_name: MEMBER_ARCHIVE
+            description: |
+              This step backs up already installed artifacts into the backup PDS
+          - name: MEMBER_DELETE
+            short_name: MEMBER_DELETE
+            description: |
+              This step deletes the artifacts
+      # Manage Updates and Binds
+      - name: INDIVIDUAL_BIND
+        short_name: INDIVIDUAL_BIND
+        description: |
+          Run a Db2 bind operation for every member. Checking for available member level overrides configurations.
+        loop:
+          loop_query: current_plan_action.artifacts
+          loop_var: dbrm_member  
+        steps:
+          - name: MEMBER_COPY
+            short_name: MEMBER_COPY
+            description: |
+              This step copies DBRMs into temporary PDS library. See 'type_dbrm_temp'
+            properties:
+              - key: var_type
+                value: type_dbrm_temp        
+          - name: LOAD_BIND_VARS
+            short_name: LOAD_BIND_VARS
+            description: |
+              Loads individual bind parms from package configuration file
+            is_artifact: True
+            properties:
+              - key: template
+                value: include_vars
+              - key: var_include_vars
+                value: db2_individual_include_vars_config
+          - name: DB2_BIND
+            short_name: DB2_BIND
+            description: |
+              This step references a template to set db2 bind operations. For both Bind Plan and Bind Package
+            is_artifact: True
+            properties:
+              - key: template
+                value: job_submit
+              - key: var_job_submit
+                value: db2_individual_job_template
+    types:
+      - name: "DBRM"
+    is_artifact: True
+    plan_tags:
+      - db2
+
+  # activity to process DBRMs always first
   #  * A tag is used to be able to run these actions only and skip others
   #    in it's own run
   #  * member_copy is configured to move the DBRM into a temp library first

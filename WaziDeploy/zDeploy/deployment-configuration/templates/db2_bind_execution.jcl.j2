@@ -1,0 +1,23 @@
+//********************************************************************
+//*               BIND - BIND THE DB2 PLAN                           *
+//********************************************************************
+//{{parameters['db2_system']['plan_jobcard'].strip()}}
+//JOBLIB   DD  DISP=SHR,
+//             DSN={{parameters['db2_system']['sdsnload']}}
+//PLABIND EXEC PGM=IKJEFT01,DYNAMNBR=20,COND=(4,LT)
+//SYSTSPRT DD  SYSOUT=*
+//SYSPRINT DD  SYSOUT=*
+//SYSUDUMP DD  SYSOUT=*
+//SYSIN    DD  DUMMY
+//SYSTSIN  DD  *
+DSN SYSTEM ({{parameters['db2_system']['subsys']}})
+BIND  PLAN({{parameters['db2_system']['plan']}}) +
+   PKLIST({{parameters['db2_system']['plan_pklist']}}) +
+   QUALIFIER({{parameters['db2_system']['qualifier']}}) +
+   OWNER({{parameters['db2_system']['sqlid']}}) +
+   ACTION({{parameters['db2_system']['plan_action']}}) +
+   ISOLATION(CS) +
+   RELEASE(COMMIT) +
+   ENCODING(EBCDIC)
+END
+/*
