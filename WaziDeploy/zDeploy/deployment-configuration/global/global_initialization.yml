@@ -24,3 +24,8 @@ include_common_cfg:
     - "{{ deploy_cfg_home }}/deployment-configuration/global/pds_specification.yml"
     - "{{ deploy_cfg_home }}/deployment-configuration/global/types_pattern_mapping.yml"
   files_must_exist: true
+
+include_generic_jcl_vars:
+ files_list:
+    - "{{ deploy_cfg_home }}/deployment-configuration/global/generic_jcl_replacing.yml"
+ files_must_exist: True

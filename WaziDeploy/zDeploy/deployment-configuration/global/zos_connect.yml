@@ -8,7 +8,7 @@ zos_connect_sys_def:
 
 template_name_zosconnect_config:
   src: '{{ deploy_cfg_home }}/deployment-configuration/templates/zos_connect_app_config.xml.j2'
-  dest: '{{ zos_connect_sys_def.root }}/configDropins/overrides/{{api_name}}.xml'
+  dest: '{{ zos_connect_sys_def.root }}/configDropins/overrides/{{ api_name }}.xml'
   mode: 0755
   delegate: False
 

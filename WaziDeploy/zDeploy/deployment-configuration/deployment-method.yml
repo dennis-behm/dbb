@@ -205,6 +205,57 @@ activities:
     plan_tags:
       - deploy
 
+  # General JCL processing routines
+  - name: GENERIC_JCL_PROCESSING
+    description: |
+      This will invoke the custom updates for multiple outputs
+    actions:
+       - name: GENERIC_TEXT_CUSTUMIZATION
+         description: | 
+           This action block show cases, how to loop on the action level 
+           over multiple deployTypes and read dynamically 
+           the configuration for a job_submit step.
+           Imagine the JCLM1..JCLM5 to be different groups with different
+           libraries, all requiring some post deployment processing
+         states:
+            - UNDEFINED
+         is_artifact: true
+         types: 
+            - name: "JCLM1"
+            - name: "JCLM2"
+            - name: "JCLM3"
+            - name: "JCLM4"
+            - name: "JCLM5"
+         loop:
+           loop_query: current_plan_action.types
+           loop_var: artifactType
+         steps:
+         - name: READ_GENERIC_CONFIGURATION
+           short_name: GENERIC_CONFIG
+           description: | 
+             This step is reading a generic configuration file that includes
+             references to the loop variable artifactType 
+           is_artifact: true
+           properties:
+             - key: template
+               value: include_vars
+             - key: var_include_vars
+               value: include_generic_jcl_vars
+         - name: GENERIC_REPLACING_LOGIC
+           short_name: GENERIC_REPLACE
+           is_artifact: true
+           description: |
+             This step is using the job_submit building block to 
+             generate a job that can invoke for instance an existing 
+             replacing/substitution logic for the defined types.
+           when:
+            - wd_query[[ length ( current_plan_step.artifacts) ]] != 0
+           properties:
+           - key: template
+             value: job_submit
+           - key: var_job_submit
+             value: generic_jcl_replacing
+
   # ROLLBACK activities
   - name: ROLLBACK_MODULES
     short_name: ROLLBACK_MODULES

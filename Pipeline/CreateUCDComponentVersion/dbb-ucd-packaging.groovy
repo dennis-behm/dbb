@@ -524,7 +524,7 @@ xml.manifest(type:"MANIFEST_SHIPLIST"){
                                 }
                             }
 
-                            // add githash — matched against the source (original workspace) file
+                            // add githash  matched against the source (original workspace) file
                             def githash = ""
                             if (buildResultProperties != null) {
                                 def gitproperty = buildResultProperties.find {
@@ -537,7 +537,7 @@ xml.manifest(type:"MANIFEST_SHIPLIST"){
                                 }
                             }
 
-                            // source traceability — use the original workspace source path
+                            // source traceability  use the original workspace source path
                             inputUrl = (buildResultProperties != null && properties.git_treeURL_prefix && githash != "") ? "${properties.git_treeURL_prefix}/${githash}/" + record.getSourcePath() : ""
                             inputs(url : "${inputUrl}") {
                                 input(name : record.getSourcePath(), compileType : "Main", url : inputUrl)
