@@ -23,4 +23,5 @@ include_common_cfg:
     - "{{ deploy_cfg_home }}/deployment-configuration/global/jcl_verification.yml"
     - "{{ deploy_cfg_home }}/deployment-configuration/global/pds_specification.yml"
     - "{{ deploy_cfg_home }}/deployment-configuration/global/types_pattern_mapping.yml"
+    - "{{ deploy_cfg_home }}/deployment-configuration/global/db2_member_level_overrides.yml"
   files_must_exist: true

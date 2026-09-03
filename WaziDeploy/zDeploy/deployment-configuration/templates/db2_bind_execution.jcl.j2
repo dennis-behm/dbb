@@ -10,15 +10,28 @@
 //SYSUDUMP DD  SYSOUT=*
 //SYSIN    DD  DUMMY
 //SYSTSIN  DD  *
-DSN SYSTEM ({{parameters['db2_system']['subsys']}})
-BIND  PACKAGE({{parameters['db2_system']['package']}}) +
+{% set _artifact_cfg_key = artifact['name'] | lower ~ '_db2_config' %}
+//* {{ _artifact_cfg_key }}
+{% set _cfg = environment[_artifact_cfg_key] if _artifact_cfg_key in environment else {} %}
+//* {{ _cfg }}
+//* {{ environment }}
+DSN SYSTEM ({{ _cfg['member_db2_subsys']  if 'member_db2_subsys'  in _cfg else parameters['db2_system']['subsys']  }})
+BIND  PACKAGE({{ _cfg['member_db2_package'] if 'member_db2_package' in _cfg else parameters['db2_system']['package'] }}) +
    MEMBER({{ artifact['name'] }}) +
    LIBRARY('{{item_type['pds']['name']|upper}}') +
    QUALIFIER({{parameters['db2_system']['qualifier']}}) +
-   OWNER({{parameters['db2_system']['sqlid']}}) +
+   OWNER({{ _cfg['member_db2_sqlid']    if 'member_db2_sqlid'    in _cfg else parameters['db2_system']['sqlid']    }}) +
    ACTION({{parameters['db2_system']['package_action']}}) +
-   ISOLATION(CS) +
+   ISOLATION({{ _cfg['member_db2_isolation'] if 'member_db2_isolation' in _cfg else 'CS' }}) +
    RELEASE(COMMIT) +
    ENCODING(EBCDIC)
+{% if 'member_db2_plan' in _cfg %}
+BIND  PLAN({{ _cfg['member_db2_plan'] }}) +
+   PKLIST({{ _cfg['member_db2_plan_pklist'] }}) +
+   ACTION(REPLACE) +
+   ISOLATION({{ _cfg['member_db2_isolation'] if 'member_db2_isolation' in _cfg else 'CS' }}) +
+   RELEASE(COMMIT) +
+   ENCODING(EBCDIC)
+{% endif %}
 END
 /*

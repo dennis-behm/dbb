@@ -66,6 +66,7 @@ activities:
                 value: include_vars
               - key: var_include_vars
                 value: include_common_cfg
+           
 
   - name: PACKAGE
     short_name: PACKAGE
@@ -108,7 +109,7 @@ activities:
   - name: DBRMS2
     description: |
       This activity is dedicated to DBRM bind modules and will process DBRM members of the package first using dedicated PDS libraries
-    short_name: DBRMS
+    short_name: DBRMS2
     actions:
       # Manage deletions of DBRMS
       - name: DELETE
@@ -127,13 +128,34 @@ activities:
             description: |
               This step deletes the artifacts
       # Manage Updates and Binds
+      - name: BIND_VARS
+        short_name: BIND_VARS
+        description: |
+            Loads bind variables
+        types:
+            - name: "DBRM"
+        is_artifact: True
+        steps:
+          - name: LOAD
+            short_name: LOAD
+            description: |
+              Loads individual bind parms from package configuration file
+            is_artifact: True
+            loop:
+              loop_query: "wd_query[[ current_plan_step.artifacts[].name ]]"
+              loop_var: dbrm_member            
+            properties:
+              - key: template
+                value: include_vars
+              - key: var_include_vars
+                value: db2_individual_include_vars_config   
       - name: INDIVIDUAL_BIND
         short_name: INDIVIDUAL_BIND
         description: |
           Run a Db2 bind operation for every member. Checking for available member level overrides configurations.
-        loop:
-          loop_query: current_plan_action.artifacts
-          loop_var: dbrm_member  
+        types:
+            - name: "DBRM"
+        is_artifact: True
         steps:
           - name: MEMBER_COPY
             short_name: MEMBER_COPY
@@ -142,25 +164,18 @@ activities:
             properties:
               - key: var_type
                 value: type_dbrm_temp        
-          - name: LOAD_BIND_VARS
-            short_name: LOAD_BIND_VARS
-            description: |
-              Loads individual bind parms from package configuration file
-            is_artifact: True
-            properties:
-              - key: template
-                value: include_vars
-              - key: var_include_vars
-                value: db2_individual_include_vars_config
           - name: DB2_BIND
             short_name: DB2_BIND
             description: |
               This step references a template to set db2 bind operations. For both Bind Plan and Bind Package
             is_artifact: True
+            loop:
+              loop_query: current_plan_step.artifacts
+              loop_var: artifact                
             properties:
               - key: template
-                value: job_submit
-              - key: var_job_submit
+                value: db2_bind_package
+              - key: var_template_name
                 value: db2_individual_job_template
     types:
       - name: "DBRM"
@@ -225,7 +240,7 @@ activities:
               - key: var_type
                 value: type_dbrm_temp
     types:
-      - name: "DBRM"
+      - name: "DBRM-no"
     is_artifact: True
     plan_tags:
       - db2

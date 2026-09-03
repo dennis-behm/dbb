@@ -1,11 +1,16 @@
-include_application_vars:
+db2_individual_include_vars_config:
   files_list:
-    - "{{ working_folder }}/test_{{ artifactType.name | lower }}.bind.yml"
-  files_must_exist: false
+      - "/u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/EPSCMORT.bind.yml"
+      #- "{{ deploy_cfg_home }}/test_{{ dbrm_member }}.bind.yml"
+    #- "{{ deploy_cfg_home }}/test_{{ artifactType.name | lower }}.bind.yml"
+  files_must_exist: true
 
-db2_individual_job_template:
-   src: "{{ deploy_cfg_home }}/deployment-configuration/templates/jcl_expert_validation.jcl.j2"
-   use_template: True
-   max_rc: 8
-   location: 'LOCAL'
-   dest: "{{ uss_root }}/jcl_gen/jcl_expert_validation.jcl"
+db2_individual_job_template: "{{ deploy_cfg_home }}/deployment-configuration/templates/db2_bind_execution.jcl.j2"
+
+
+#db2_individual_job_template:
+#   src: "{{ deploy_cfg_home }}/deployment-configuration/templates/db2_bind_execution.jcl.j2"
+#   use_template: True
+#   max_rc: 8
+#   location: 'LOCAL'
+#   dest: "{{ uss_root }}/jcl_gen/jcl_expert_validation.jcl"
