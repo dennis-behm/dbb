@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<!--
+    Licensed Materials - Property of IBM
+    (c) Copyright IBM Corporation 2025. All Rights Reserved.
+
+    Note to U.S. Government Users Restricted Rights:
+    Use, duplication or disclosure restricted by GSA ADP Schedule
+    Contract with IBM Corp.
+ -->
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+<title>IBM Deploy Evidences</title>
+<style type="text/css">
+body {
+    font: 12px Arial, sans-serif;
+}
+table {
+    border-collapse: collapse;
+}
+table, th, td {
+    vertical-align: top;
+}
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+tr.even {
+    background-color: #f2f2f2
+}
+th {
+    background-color: #ddd;
+    color: black !important;
+}
+td.label {
+    font-weight: bold;
+}
+span.vlabel {
+    float: left;
+    font-weight: bold;
+    width: 10em;
+    margin-left: 20px;
+}
+span.vlabel_ok {
+    font-weight: bold;
+    color: green;
+}
+
+span.vlabel_skipped {
+    font-weight: bold;
+    color: orange;
+}
+
+span.vlabel_ko {
+    font-weight: bold;
+    color: red;
+}
+
+.bottomRight {
+   float:right;
+   text-align:right;
+   font: 10px Arial, sans-serif;
+}
+.dep {
+    font: 11px Arial, sans-serif;
+}
+.depType {
+    font: 9px Arial, sans-serif;
+    background-color: #81C4E8;
+}
+</style>
+</head>
+<body>
+<script type="text/javascript">
+function toggle(log, text)
+{
+    if (document.getElementById(text).text == 'Show Log')
+        document.getElementById(text).text = 'Hide Log';
+    else
+        document.getElementById(text).text = 'Show Log';
+
+    if (document.getElementById(log).style.display == 'none')
+        document.getElementById(log).style.display = 'block';
+    else
+        document.getElementById(log).style.display = 'none';
+};
+</script>
+
+<div id="main">
+
+<hr>
+<h1>Deployments List</h1>
+<hr>
+<table border='1px solid #A9A9A9' style='width:100%;'><tr><th id=\"name\">Status</th><th id=\"name\">Name</th><th id=\"version\">Version</th><th id=\"deploydate\">Deployment Date</th><th id=\"environment\">Environment</th></tr>
+
+<tr>
+<td>
+
+<span class='vlabel_ko'>Failed</span><br>
+
+</td>
+<td><a href="#20260903.092034.296">mortgageapplication-rel-1.1.0-13179.tar</a></td>
+
+<td></td>
+
+<td>20260903.092034.296</td>
+<td>EOLEB7-Integration</td>
+</tr>
+
+</table>
+
+<a id="20260903.092034.296"></a>
+<hr>
+
+<h1>Deployment mortgageapplication-rel-1.1.0-13179.tar</h1>
+
+<hr>
+<h2>Deployment Information:</h2>
+<span class='vlabel'>Name </span>: mortgageapplication-rel-1.1.0-13179.tar</br>
+
+<span class='vlabel'>Deployment Date </span>: 20260903.092034.296</br>
+<span class='vlabel'>Environment </span>: EOLEB7-Integration</br>
+<span class='vlabel'>Evidence File </span>: /tmp/tmphv7w8fsb/wd_evidences_data/evidence.yaml</br>
+
+
+<span class='vlabel'>Status </span>: <span class='vlabel_ko'>Failed</span><br>
+
+<h2>Manifests:</h2>
+
+<span class='vlabel'>Name </span>: mortgageapplication-rel-1.1.0-13179.tar</br>
+
+<span class='vlabel'>Description </span>: mortgageapplication-rel-1.1.0-13179.tar</br>
+
+
+
+<span class='vlabel'>Package </span>:</br>
+<span class='vlabel'>&nbsp;&nbsp;Uri </span>: <a href='' target=_other></a></br>
+
+
+
+
+<p><h2>Deployment Details:</h2>
+<table border='1px solid #A9A9A9' style='width:100%;'><tr><th id=\"name\">Activities</th><th id=\"commands\">Actions</th><th id=\"rc\">Steps</th></tr>
+<tr>
+<td>
+LOAD_CONFIG
+</td>
+<td>
+READ_CONFIGURATION
+</td>
+<td>
+<table border='1px solid #A9A9A9' style='width:100%;'><tr><th id=\"name\">Steps</th><th id=\"commands\">Artifacts</th><th id=\"rc\">Status</th></tr>
+<tr>
+<td style='width:200px;'>
+INCLUDE_GLOBAL_CONFIG
+</td>
+<td style='width:200px;'>
+
+</td>
+<td>
+<b>Status: </b>
+
+<span class='vlabel_ok'>Success</span>
+
+<br><a id='showDep20260903.092034.296LOAD_CONFIGREAD_CONFIGURATIONINCLUDE_GLOBAL_CONFIG' class='bottomRight' href='javascript:onclick=toggle("dep20260903.092034.296LOAD_CONFIGREAD_CONFIGURATIONINCLUDE_GLOBAL_CONFIG","showDep20260903.092034.296LOAD_CONFIGREAD_CONFIGURATIONINCLUDE_GLOBAL_CONFIG")'>Show Log</a>
+<div id='dep20260903.092034.296LOAD_CONFIGREAD_CONFIGURATIONINCLUDE_GLOBAL_CONFIG' style='display:none' class='dep'>
+<br><b>Details:</b>
+
+<ul style="margin-left: 0px;padding-left: 0;">
+
+<span class='vlabel_ko'><b>ymli_full_file_path</b></span>:
+
+/tmp/tmphv7w8fsb/wd_evidences_data/evidence.yaml<br>
+
+
+
+<span class='vlabel_ko'><b>status</b></span>:
+
+Ok<br>
+
+
+
+<span class='vlabel_ko'><b>msg</b></span>:
+
+Succeeded to find and access files in 'files_list' or files must not exist<br>
+
+
+
+<span class='vlabel_ko'><b>args</b></span>:
+
+<ul style="margin-left: 10px;padding-left: 0;">
+
+<span class='vlabel_ko'><b>ymli_full_file_path</b></span>:
+
+/tmp/tmphv7w8fsb/wd_evidences_data/evidence.yaml<br>
+
+
+
+<span class='vlabel_ko'><b>files_list</b></span>:
+
+<ul style="margin-left: 10px;padding-left: 0;">
+
+
+../..//deployment-configuration/global/global_initialization.yml<br>
+
+
+
+</ul>
+
+
+
+<span class='vlabel_ko'><b>files_must_exist</b></span>:
+
+true<br>
+
+
+
+</ul>
+
+
+
+<span class='vlabel_ko'><b>results</b></span>:
+
+<ul style="margin-left: 10px;padding-left: 0;">
+
+</ul>
+
+
+
+</ul>
+
+
+
+</div>
+</td>
+</tr>
+<tr>
+<td style='width:200px;'>
+INCLUDE_APPLICATION_VARIABLES
+</td>
+<td style='width:200px;'>
+
+</td>
+<td>
+<b>Status: </b>
+
+<span class='vlabel_ok'>Success</span>
+
+<br><a id='showDep20260903.092034.296LOAD_CONFIGREAD_CONFIGURATIONINCLUDE_APPLICATION_VARIABLES' class='bottomRight' href='javascript:onclick=toggle("dep20260903.092034.296LOAD_CONFIGREAD_CONFIGURATIONINCLUDE_APPLICATION_VARIABLES","showDep20260903.092034.296LOAD_CONFIGREAD_CONFIGURATIONINCLUDE_APPLICATION_VARIABLES")'>Show Log</a>
+<div id='dep20260903.092034.296LOAD_CONFIGREAD_CONFIGURATIONINCLUDE_APPLICATION_VARIABLES' style='display:none' class='dep'>
+<br><b>Details:</b>
+
+<ul style="margin-left: 0px;padding-left: 0;">
+
+<span class='vlabel_ko'><b>ymli_full_file_path</b></span>:
+
+/tmp/tmphv7w8fsb/wd_evidences_data/evidence.yaml<br>
+
+
+
+<span class='vlabel_ko'><b>status</b></span>:
+
+Ok<br>
+
+
+
+<span class='vlabel_ko'><b>msg</b></span>:
+
+Could not find or access file /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/environment-configuration/application-overrides/mortgageapplication/EOLEB7-Integration.yml but ignored by files_must_exist=False<br>
+
+
+
+<span class='vlabel_ko'><b>args</b></span>:
+
+<ul style="margin-left: 10px;padding-left: 0;">
+
+<span class='vlabel_ko'><b>ymli_full_file_path</b></span>:
+
+/tmp/tmphv7w8fsb/wd_evidences_data/evidence.yaml<br>
+
+
+
+<span class='vlabel_ko'><b>files_list</b></span>:
+
+<ul style="margin-left: 10px;padding-left: 0;">
+
+
+../..//environment-configuration/application-overrides/mortgageapplication/EOLEB7-Integration.yml<br>
+
+
+
+</ul>
+
+
+
+<span class='vlabel_ko'><b>files_must_exist</b></span>:
+
+false<br>
+
+
+
+</ul>
+
+
+
+<span class='vlabel_ko'><b>results</b></span>:
+
+<ul style="margin-left: 10px;padding-left: 0;">
+
+</ul>
+
+
+
+</ul>
+
+
+
+</div>
+</td>
+</tr>
+<tr>
+<td style='width:200px;'>
+INCLUDE_MIDDLEWARE_CONFIG
+</td>
+<td style='width:200px;'>
+
+</td>
+<td>
+<b>Status: </b>
+
+<span class='vlabel_ok'>Success</span>
+
+<br><a id='showDep20260903.092034.296LOAD_CONFIGREAD_CONFIGURATIONINCLUDE_MIDDLEWARE_CONFIG' class='bottomRight' href='javascript:onclick=toggle("dep20260903.092034.296LOAD_CONFIGREAD_CONFIGURATIONINCLUDE_MIDDLEWARE_CONFIG","showDep20260903.092034.296LOAD_CONFIGREAD_CONFIGURATIONINCLUDE_MIDDLEWARE_CONFIG")'>Show Log</a>
+<div id='dep20260903.092034.296LOAD_CONFIGREAD_CONFIGURATIONINCLUDE_MIDDLEWARE_CONFIG' style='display:none' class='dep'>
+<br><b>Details:</b>
+
+<ul style="margin-left: 0px;padding-left: 0;">
+
+<span class='vlabel_ko'><b>ymli_full_file_path</b></span>:
+
+/tmp/tmphv7w8fsb/wd_evidences_data/evidence.yaml<br>
+
+
+
+<span class='vlabel_ko'><b>status</b></span>:
+
+Ok<br>
+
+
+
+<span class='vlabel_ko'><b>msg</b></span>:
+
+Succeeded to find and access files in 'files_list' or files must not exist<br>
+
+
+
+<span class='vlabel_ko'><b>args</b></span>:
+
+<ul style="margin-left: 10px;padding-left: 0;">
+
+<span class='vlabel_ko'><b>ymli_full_file_path</b></span>:
+
+/tmp/tmphv7w8fsb/wd_evidences_data/evidence.yaml<br>
+
+
+
+<span class='vlabel_ko'><b>files_list</b></span>:
+
+<ul style="margin-left: 10px;padding-left: 0;">
+
+
+../..//deployment-configuration/global/cics_config.yml<br>
+
+
+
+
+../..//deployment-configuration/global/db2_config.yml<br>
+
+
+
+
+../..//deployment-configuration/global/zos_connect.yml<br>
+
+
+
+</ul>
+
+
+
+<span class='vlabel_ko'><b>files_must_exist</b></span>:
+
+true<br>
+
+
+
+</ul>
+
+
+
+<span class='vlabel_ko'><b>results</b></span>:
+
+<ul style="margin-left: 10px;padding-left: 0;">
+
+</ul>
+
+
+
+</ul>
+
+
+
+</div>
+</td>
+</tr>
+<tr>
+<td style='width:200px;'>
+INCLUDE_COMMON_CONFIG
+</td>
+<td style='width:200px;'>
+
+</td>
+<td>
+<b>Status: </b>
+
+<span class='vlabel_ok'>Success</span>
+
+<br><a id='showDep20260903.092034.296LOAD_CONFIGREAD_CONFIGURATIONINCLUDE_COMMON_CONFIG' class='bottomRight' href='javascript:onclick=toggle("dep20260903.092034.296LOAD_CONFIGREAD_CONFIGURATIONINCLUDE_COMMON_CONFIG","showDep20260903.092034.296LOAD_CONFIGREAD_CONFIGURATIONINCLUDE_COMMON_CONFIG")'>Show Log</a>
+<div id='dep20260903.092034.296LOAD_CONFIGREAD_CONFIGURATIONINCLUDE_COMMON_CONFIG' style='display:none' class='dep'>
+<br><b>Details:</b>
+
+<ul style="margin-left: 0px;padding-left: 0;">
+
+<span class='vlabel_ko'><b>ymli_full_file_path</b></span>:
+
+/tmp/tmphv7w8fsb/wd_evidences_data/evidence.yaml<br>
+
+
+
+<span class='vlabel_ko'><b>status</b></span>:
+
+Ok<br>
+
+
+
+<span class='vlabel_ko'><b>msg</b></span>:
+
+Succeeded to find and access files in 'files_list' or files must not exist<br>
+
+
+
+<span class='vlabel_ko'><b>args</b></span>:
+
+<ul style="margin-left: 10px;padding-left: 0;">
+
+<span class='vlabel_ko'><b>ymli_full_file_path</b></span>:
+
+/tmp/tmphv7w8fsb/wd_evidences_data/evidence.yaml<br>
+
+
+
+<span class='vlabel_ko'><b>files_list</b></span>:
+
+<ul style="margin-left: 10px;padding-left: 0;">
+
+
+../..//deployment-configuration/global/jcl_verification.yml<br>
+
+
+
+
+../..//deployment-configuration/global/pds_specification.yml<br>
+
+
+
+
+../..//deployment-configuration/global/types_pattern_mapping.yml<br>
+
+
+
+
+../..//deployment-configuration/global/db2_member_level_overrides.yml<br>
+
+
+
+</ul>
+
+
+
+<span class='vlabel_ko'><b>files_must_exist</b></span>:
+
+true<br>
+
+
+
+</ul>
+
+
+
+<span class='vlabel_ko'><b>results</b></span>:
+
+<ul style="margin-left: 10px;padding-left: 0;">
+
+</ul>
+
+
+
+</ul>
+
+
+
+</div>
+</td>
+</tr>
+
+</table>
+</tr>
+</td>
+<td></td>
+
+
+<tr>
+<td>
+PACKAGE
+</td>
+<td>
+EXPAND_PACKAGE
+</td>
+<td>
+<table border='1px solid #A9A9A9' style='width:100%;'><tr><th id=\"name\">Steps</th><th id=\"commands\">Artifacts</th><th id=\"rc\">Status</th></tr>
+<tr>
+<td style='width:200px;'>
+PACKAGE
+</td>
+<td style='width:200px;'>
+
+</td>
+<td>
+<b>Status: </b>
+
+<span class='vlabel_ok'>Success</span>
+
+<br><a id='showDep20260903.092034.296PACKAGEEXPAND_PACKAGEPACKAGE' class='bottomRight' href='javascript:onclick=toggle("dep20260903.092034.296PACKAGEEXPAND_PACKAGEPACKAGE","showDep20260903.092034.296PACKAGEEXPAND_PACKAGEPACKAGE")'>Show Log</a>
+<div id='dep20260903.092034.296PACKAGEEXPAND_PACKAGEPACKAGE' style='display:none' class='dep'>
+<br><b>Details:</b>
+
+<ul style="margin-left: 0px;padding-left: 0;">
+
+<span class='vlabel_ko'><b>ymli_full_file_path</b></span>:
+
+/tmp/tmphv7w8fsb/wd_evidences_data/evidence.yaml<br>
+
+
+
+<span class='vlabel_ko'><b>status</b></span>:
+
+Ok<br>
+
+
+
+<span class='vlabel_ko'><b>msg</b></span>:
+
+Succeeded to expand the package /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-20-32/applicationArchive.tar to /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-20-32 on system os OS/390<br>
+
+
+
+<span class='vlabel_ko'><b>results</b></span>:
+
+<ul style="margin-left: 10px;padding-left: 0;">
+
+
+<ul style="margin-left: 10px;padding-left: 0;">
+
+<span class='vlabel_ko'><b>ymli_full_file_path</b></span>:
+
+/tmp/tmphv7w8fsb/wd_evidences_data/evidence.yaml<br>
+
+
+
+<span class='vlabel_ko'><b>status</b></span>:
+
+Ok<br>
+
+
+
+<span class='vlabel_ko'><b>msg</b></span>:
+
+subprocess.run(['tar', '-xf', '/u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-20-32/applicationArchive.tar', '-L', 'T', '-C', '/u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-20-32'], capture_output=True, text=True)<br>
+
+
+
+<span class='vlabel_ko'><b>rc</b></span>:
+
+0<br>
+
+
+
+</ul>
+
+
+
+</ul>
+
+
+
+</ul>
+
+
+
+</div>
+</td>
+</tr>
+
+</table>
+</tr>
+</td>
+<td></td>
+
+
+<tr>
+<td>
+DBRMS2
+</td>
+<td>
+BIND_VARS
+</td>
+<td>
+<table border='1px solid #A9A9A9' style='width:100%;'><tr><th id=\"name\">Steps</th><th id=\"commands\">Artifacts</th><th id=\"rc\">Status</th></tr>
+<tr>
+<td style='width:200px;'>
+LOAD
+</td>
+<td style='width:200px;'>
+EPSCMORT.DBRM<br>
+</td>
+<td>
+<b>Status: </b>
+
+<span class='vlabel_ok'>Success</span>
+
+<br><a id='showDep20260903.092034.296DBRMS2BIND_VARSLOAD' class='bottomRight' href='javascript:onclick=toggle("dep20260903.092034.296DBRMS2BIND_VARSLOAD","showDep20260903.092034.296DBRMS2BIND_VARSLOAD")'>Show Log</a>
+<div id='dep20260903.092034.296DBRMS2BIND_VARSLOAD' style='display:none' class='dep'>
+<br><b>Details:</b>
+
+<ul style="margin-left: 0px;padding-left: 0;">
+
+<span class='vlabel_ko'><b>ymli_full_file_path</b></span>:
+
+/tmp/tmphv7w8fsb/wd_evidences_data/evidence.yaml<br>
+
+
+
+<span class='vlabel_ko'><b>status</b></span>:
+
+Ok<br>
+
+
+
+<span class='vlabel_ko'><b>msg</b></span>:
+
+Succeeded to find and access files in 'files_list' or files must not exist<br>
+
+
+
+<span class='vlabel_ko'><b>args</b></span>:
+
+<ul style="margin-left: 10px;padding-left: 0;">
+
+<span class='vlabel_ko'><b>ymli_full_file_path</b></span>:
+
+/tmp/tmphv7w8fsb/wd_evidences_data/evidence.yaml<br>
+
+
+
+<span class='vlabel_ko'><b>files_list</b></span>:
+
+<ul style="margin-left: 10px;padding-left: 0;">
+
+
+../..//EPSCMORT.bind.yml<br>
+
+
+
+</ul>
+
+
+
+<span class='vlabel_ko'><b>files_must_exist</b></span>:
+
+true<br>
+
+
+
+</ul>
+
+
+
+<span class='vlabel_ko'><b>results</b></span>:
+
+<ul style="margin-left: 10px;padding-left: 0;">
+
+</ul>
+
+
+
+</ul>
+
+
+
+</div>
+</td>
+</tr>
+
+</table>
+</tr>
+</td>
+<td></td>
+<td>
+INDIVIDUAL_BIND
+</td>
+<td>
+<table border='1px solid #A9A9A9' style='width:100%;'><tr><th id=\"name\">Steps</th><th id=\"commands\">Artifacts</th><th id=\"rc\">Status</th></tr>
+<tr>
+<td style='width:200px;'>
+MEMBER_COPY
+</td>
+<td style='width:200px;'>
+EPSCMORT.DBRM<br>
+</td>
+<td>
+<b>Status: </b>
+
+<span class='vlabel_ok'>Success</span>
+
+<br><a id='showDep20260903.092034.296DBRMS2INDIVIDUAL_BINDMEMBER_COPY' class='bottomRight' href='javascript:onclick=toggle("dep20260903.092034.296DBRMS2INDIVIDUAL_BINDMEMBER_COPY","showDep20260903.092034.296DBRMS2INDIVIDUAL_BINDMEMBER_COPY")'>Show Log</a>
+<div id='dep20260903.092034.296DBRMS2INDIVIDUAL_BINDMEMBER_COPY' style='display:none' class='dep'>
+<br><b>Details:</b>
+
+<ul style="margin-left: 0px;padding-left: 0;">
+
+<span class='vlabel_ko'><b>ymli_full_file_path</b></span>:
+
+/tmp/tmphv7w8fsb/wd_evidences_data/evidence.yaml<br>
+
+
+
+<span class='vlabel_ko'><b>status</b></span>:
+
+Ok<br>
+
+
+
+<span class='vlabel_ko'><b>artifact</b></span>:
+
+<ul style="margin-left: 10px;padding-left: 0;">
+
+<span class='vlabel_ko'><b>ymli_full_file_path</b></span>:
+
+/tmp/tmphv7w8fsb/wd_evidences_data/evidence.yaml<br>
+
+
+
+<span class='vlabel_ko'><b>name</b></span>:
+
+EPSCMORT<br>
+
+
+
+<span class='vlabel_ko'><b>type</b></span>:
+
+DBRM<br>
+
+
+
+<span class='vlabel_ko'><b>path</b></span>:
+
+./bin/dbrm/EPSCMORT.DBRM<br>
+
+
+
+</ul>
+
+
+
+<span class='vlabel_ko'><b>msg</b></span>:
+
+Succeeded to copy /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-20-32/./bin/dbrm/EPSCMORT.DBRM to 'IBMUSER.WD.TEST.TMP.DBRM(EPSCMORT)'<br>
+
+
+
+<span class='vlabel_ko'><b>args</b></span>:
+
+<ul style="margin-left: 10px;padding-left: 0;">
+
+<span class='vlabel_ko'><b>ymli_full_file_path</b></span>:
+
+/tmp/tmphv7w8fsb/wd_evidences_data/evidence.yaml<br>
+
+
+
+<span class='vlabel_ko'><b>pattern</b></span>:
+
+.*.DBRM$<br>
+
+
+
+<span class='vlabel_ko'><b>dataset_destination</b></span>:
+
+IBMUSER.WD.TEST.TMP.DBRM<br>
+
+
+
+<span class='vlabel_ko'><b>force_lock</b></span>:
+
+false<br>
+
+
+
+<span class='vlabel_ko'><b>aliases</b></span>:
+
+true<br>
+
+
+
+<span class='vlabel_ko'><b>is_load</b></span>:
+
+false<br>
+
+
+
+<span class='vlabel_ko'><b>is_binary</b></span>:
+
+true<br>
+
+
+
+<span class='vlabel_ko'><b>is_psb</b></span>:
+
+false<br>
+
+
+
+<span class='vlabel_ko'><b>is_dbd</b></span>:
+
+false<br>
+
+
+
+<span class='vlabel_ko'><b>is_asa_text</b></span>:
+
+false<br>
+
+
+
+<span class='vlabel_ko'><b>rename_subs</b></span>:
+
+<ul style="margin-left: 10px;padding-left: 0;">
+
+</ul>
+
+
+
+<span class='vlabel_ko'><b>text_subs</b></span>:
+
+<ul style="margin-left: 10px;padding-left: 0;">
+
+</ul>
+
+
+
+<span class='vlabel_ko'><b>is_record</b></span>:
+
+false<br>
+
+
+
+<span class='vlabel_ko'><b>use_native_copy</b></span>:
+
+true<br>
+
+
+
+</ul>
+
+
+
+<span class='vlabel_ko'><b>results</b></span>:
+
+<ul style="margin-left: 10px;padding-left: 0;">
+
+<span class='vlabel_ko'><b>ymli_full_file_path</b></span>:
+
+/tmp/tmphv7w8fsb/wd_evidences_data/evidence.yaml<br>
+
+
+
+<span class='vlabel_ko'><b>command</b></span>:
+
+UPX /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-20-32/./bin/dbrm/EPSCMORT.DBRM IBMUSER.WD.TEST.TMP.DBRM EPSCMORT B 0<br>
+
+
+
+<span class='vlabel_ko'><b>result_command</b></span>:
+
+RC: 0<br>wd_cpf_log: Copy /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-20-32/./bin/dbrm/EPSCMORT.DBRM to //'IBMUSER.WD.TEST.TMP.DBRM(EPSCMORT)'<br>END (RC=0)<br>
+
+
+
+</ul>
+
+
+
+</ul>
+
+
+
+</div>
+</td>
+</tr>
+<tr>
+<td style='width:200px;'>
+DB2_BIND
+</td>
+<td style='width:200px;'>
+EPSCMORT.DBRM<br>
+</td>
+<td>
+<b>Status: </b>
+
+<span class='vlabel_ko'><b>Failed</b></span><br>
+
+<br><a id='showDep20260903.092034.296DBRMS2INDIVIDUAL_BINDDB2_BIND' class='bottomRight' href='javascript:onclick=toggle("dep20260903.092034.296DBRMS2INDIVIDUAL_BINDDB2_BIND","showDep20260903.092034.296DBRMS2INDIVIDUAL_BINDDB2_BIND")'>Show Log</a>
+<div id='dep20260903.092034.296DBRMS2INDIVIDUAL_BINDDB2_BIND' style='display:none' class='dep'>
+<br><b>Details:</b>
+
+<ul style="margin-left: 0px;padding-left: 0;">
+
+<span class='vlabel_ko'><b>ymli_full_file_path</b></span>:
+
+/tmp/tmphv7w8fsb/wd_evidences_data/evidence.yaml<br>
+
+
+
+<span class='vlabel_ko'><b>status</b></span>:
+
+Failed<br>
+
+
+
+<span class='vlabel_ko'><b>msg</b></span>:
+
+Traceback (most recent call last):<br>  File "<wazideploy-3.0.8.1>/wazideploy_translator/deploy.py", line 1464, in process<br>  File "<wazideploy-3.0.8.1>/wazideploy_translator/deploy.py", line 871, in execute_building_block<br>  File "<wazideploy-3.0.8.1>/wazideploy_shared/python/modules/db2_bind_package.py", line 227, in process<br>  File "<wazideploy-3.0.8.1>/wazideploy_shared/python/modules/python_module.py", line 222, in submit_job<br>  File "<wazideploy-3.0.8.1>/wazideploy_shared/python/modules/python_module.py", line 358, in submit_job_after_zoau_v13<br>  File "/ZT01/var/python-envs/wazi-deploy-v3.0.8.1/lib/python3.13/site-packages/zoautil_py/jobs.py", line 611, in submit<br>    job_id = submit_return_job_id(source, is_unix, **kwargs)<br>  File "/ZT01/var/python-envs/wazi-deploy-v3.0.8.1/lib/python3.13/site-packages/zoautil_py/jobs.py", line 555, in submit_return_job_id<br>    raise JobSubmitException(zoau_response)<br>zoautil_py.exceptions.JobSubmitException: [ZOAUResponse]<br>	rc: 8<br>	response_format: UTF-8<br>	stdout_response:<br>	stderr_response: BGYSC4006E Line exceeds maximum length of 80.<br><br>	command: jsub -f -- "/u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-20-32/bind_package_1.jcl"<br>
+
+
+
+</ul>
+
+
+
+</div>
+</td>
+</tr>
+
+</table>
+</tr>
+</td>
+<td></td>
+
+
+
+</table>
+<p>&nbsp;</p>
+
+
+</div></body></html>

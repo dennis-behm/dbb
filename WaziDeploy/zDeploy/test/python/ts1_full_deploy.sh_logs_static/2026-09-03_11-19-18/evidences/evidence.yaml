@@ -1,0 +1,364 @@
+apiVersion: deploy.ibm.com/v1
+kind: Evidence
+metadata:
+  name: mortgageapplication-rel-1.1.0-13179.tar
+  description: mortgageapplication-rel-1.1.0-13179.tar
+  annotations:
+    creation_timestamp: 20260903.091919.487
+    engine:
+      version: 3.0.8.1
+      build: '12'
+      date: Tue Aug 11 07:05:19 UTC 2026
+    package:
+      path: /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-19-18/applicationArchive.tar
+      sha256: d9651158d51a378f834046b5773e12b4499c96b3e49b86aba08cdd3c64e156e8
+    runtime_context:
+      zoau_version: 1.4.2.1
+    environment_name: EOLEB7-Integration
+    deploy_timestamp: 20260903.091919.941
+    smf_record:
+      status: Ok
+status: Failed
+activities:
+- name: LOAD_CONFIG
+  properties: []
+  actions:
+  - name: READ_CONFIGURATION
+    properties: []
+    steps:
+    - name: INCLUDE_GLOBAL_CONFIG
+      building_block: INCLUDE_VARS
+      properties:
+      - key: template
+        value: include_vars
+      - key: var_include_vars
+        value: include_global_config
+      artifacts: []
+      step_result:
+        status: Ok
+        msg: Building block include_vars succeeded
+        results:
+        - status: Ok
+          msg: Succeeded to find and access files in 'files_list' or files must not
+            exist
+          args:
+            files_list:
+            - ../..//deployment-configuration/global/global_initialization.yml
+            files_must_exist: true
+          results: []
+        duration: 0.009699106216430664
+      short_name: INCLUDE_GLOBAL_CFG
+      description: Load global include configuration global_initialization.yml from
+        central location
+      loop_index: 0
+    - name: INCLUDE_APPLICATION_VARIABLES
+      building_block: INCLUDE_VARS
+      properties:
+      - key: template
+        value: include_vars
+      - key: var_include_vars
+        value: include_application_vars
+      artifacts: []
+      step_result:
+        status: Ok
+        msg: Building block include_vars succeeded
+        results:
+        - status: Ok
+          msg: Could not find or access file /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/environment-configuration/application-overrides/mortgageapplication/EOLEB7-Integration.yml
+            but ignored by files_must_exist=False
+          args:
+            files_list:
+            - ../..//environment-configuration/application-overrides/mortgageapplication/EOLEB7-Integration.yml
+            files_must_exist: false
+          results: []
+        duration: 0.0006363391876220703
+      short_name: INCLUDE_APP_VARS
+      description: Load environment specific application overrides from central location
+      loop_index: 0
+    - name: INCLUDE_MIDDLEWARE_CONFIG
+      building_block: INCLUDE_VARS
+      properties:
+      - key: template
+        value: include_vars
+      - key: var_include_vars
+        value: include_middleware_cfg
+      artifacts: []
+      step_result:
+        status: Ok
+        msg: Building block include_vars succeeded
+        results:
+        - status: Ok
+          msg: Succeeded to find and access files in 'files_list' or files must not
+            exist
+          args:
+            files_list:
+            - ../..//deployment-configuration/global/cics_config.yml
+            - ../..//deployment-configuration/global/db2_config.yml
+            - ../..//deployment-configuration/global/zos_connect.yml
+            files_must_exist: true
+          results: []
+        duration: 0.04402804374694824
+      short_name: INCLUDE_MIDDLEWARE_CFG
+      description: Load global middleware configuration configuring the Wazi Deploy
+        building blocks
+      loop_index: 0
+    - name: INCLUDE_COMMON_CONFIG
+      building_block: INCLUDE_VARS
+      properties:
+      - key: template
+        value: include_vars
+      - key: var_include_vars
+        value: include_common_cfg
+      artifacts: []
+      step_result:
+        status: Ok
+        msg: Building block include_vars succeeded
+        results:
+        - status: Ok
+          msg: Succeeded to find and access files in 'files_list' or files must not
+            exist
+          args:
+            files_list:
+            - ../..//deployment-configuration/global/jcl_verification.yml
+            - ../..//deployment-configuration/global/pds_specification.yml
+            - ../..//deployment-configuration/global/types_pattern_mapping.yml
+            - ../..//deployment-configuration/global/db2_member_level_overrides.yml
+            files_must_exist: true
+          results: []
+        duration: 0.037371158599853516
+      short_name: INCLUDE_COMMON_CFG
+      description: Load global configuration for Wazi Deploy Core building blocks
+        such as type mappings and dataset configurations
+      loop_index: 0
+    action_result:
+      status: Ok
+      msg: Ok
+      results: []
+    short_name: READ_CONFIG
+    loop_index: 0
+  activity_result:
+    status: Ok
+    msg: Ok
+    results: []
+  short_name: LOAD_CONFIG
+  description: |-
+    Load the generic Wazi Deploy Configuration variables
+    Specific for the Python implementation
+  tags:
+  - always
+  loop_index: 0
+- name: PACKAGE
+  properties: []
+  actions:
+  - name: EXPAND_PACKAGE
+    properties: []
+    steps:
+    - name: PACKAGE
+      building_block: PACKAGE
+      properties: []
+      artifacts: []
+      step_result:
+        status: Ok
+        msg: Expand package completed
+        results:
+        - status: Ok
+          msg: Succeeded to expand the package /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-19-18/applicationArchive.tar
+            to /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-19-18
+            on system os OS/390
+          results:
+          - status: Ok
+            msg: subprocess.run(['tar', '-xf', '/u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-19-18/applicationArchive.tar',
+              '-L', 'T', '-C', '/u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-19-18'],
+              capture_output=True, text=True)
+            rc: 0
+        duration: 0.5516712665557861
+      loop_index: 0
+    action_result:
+      status: Ok
+      msg: Ok
+      results: []
+    short_name: EXPAND_PACKAGE
+    loop_index: 0
+  activity_result:
+    status: Ok
+    msg: Ok
+    results: []
+  short_name: PACKAGE
+  description: This activity expands the package into the working directory
+  tags:
+  - always
+  loop_index: 0
+- name: DBRMS2
+  properties: []
+  actions:
+  - name: BIND_VARS
+    properties: []
+    steps:
+    - name: LOAD
+      building_block: INCLUDE_VARS
+      properties:
+      - key: template
+        value: include_vars
+      - key: var_include_vars
+        value: db2_individual_include_vars_config
+      artifacts:
+      - name: EPSCMORT
+        hash: b6b7850dc9768d4dcfa061599dfebbedd3dc1de48f37eb04f2bad7544ba967bc
+        properties:
+        - key: path
+          value: ./bin/dbrm/EPSCMORT.DBRM
+        - key: wd_manifest_index
+          value: 0
+        - key: type
+          value: DBRM
+        type: DBRM
+        path: ./bin/dbrm/EPSCMORT.DBRM
+      step_result:
+        status: Ok
+        msg: Building block include_vars succeeded
+        results:
+        - status: Ok
+          msg: Succeeded to find and access files in 'files_list' or files must not
+            exist
+          args:
+            files_list:
+            - /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/EPSCMORT.bind.yml
+            files_must_exist: true
+          results: []
+        duration: 0.002386331558227539
+      short_name: LOAD
+      description: Loads individual bind parms from package configuration file
+      loop:
+        loop_query: wd_query[[ current_plan_step.artifacts[].name ]]
+        loop_var: dbrm_member
+      loop_index: 0
+    action_result:
+      status: Ok
+      msg: Ok
+      results: []
+    short_name: BIND_VARS
+    description: Loads bind variables
+    loop_index: 0
+  - name: INDIVIDUAL_BIND
+    properties: []
+    steps:
+    - name: MEMBER_COPY
+      building_block: MEMBER_COPY
+      properties:
+      - key: var_type
+        value: type_dbrm_temp
+      artifacts:
+      - name: EPSCMORT
+        hash: b6b7850dc9768d4dcfa061599dfebbedd3dc1de48f37eb04f2bad7544ba967bc
+        properties:
+        - key: path
+          value: ./bin/dbrm/EPSCMORT.DBRM
+        - key: wd_manifest_index
+          value: 0
+        - key: type
+          value: DBRM
+        type: DBRM
+        path: ./bin/dbrm/EPSCMORT.DBRM
+      step_result:
+        status: Ok
+        msg: All items completed
+        results:
+        - status: Ok
+          artifact:
+            name: EPSCMORT
+            type: DBRM
+            path: ./bin/dbrm/EPSCMORT.DBRM
+          msg: Succeeded to copy /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-19-18/./bin/dbrm/EPSCMORT.DBRM
+            to 'IBMUSER.WD.TEST.TMP.DBRM(EPSCMORT)'
+          args:
+            pattern: .*.DBRM$
+            dataset_destination: IBMUSER.WD.TEST.TMP.DBRM
+            force_lock: false
+            aliases: true
+            is_load: false
+            is_binary: true
+            is_psb: false
+            is_dbd: false
+            is_asa_text: false
+            rename_subs: []
+            text_subs: []
+            is_record: false
+            use_native_copy: true
+          results:
+            command: |-
+              UPX /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-19-18/./bin/dbrm/EPSCMORT.DBRM IBMUSER.WD.TEST.TMP.DBRM EPSCMORT B 0
+            result_command: |-
+              RC: 0
+              wd_cpf_log: Copy /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-19-18/./bin/dbrm/EPSCMORT.DBRM to //'IBMUSER.WD.TEST.TMP.DBRM(EPSCMORT)'
+              END (RC=0)
+        duration: 1.197937250137329
+      short_name: MEMBER_COPY
+      description: This step copies DBRMs into temporary PDS library. See 'type_dbrm_temp'
+      loop_index: 0
+    - name: DB2_BIND
+      building_block: DB2_BIND_PACKAGE
+      properties:
+      - key: template
+        value: db2_bind_package
+      - key: var_template_name
+        value: db2_individual_job_template
+      artifacts:
+      - name: EPSCMORT
+        hash: b6b7850dc9768d4dcfa061599dfebbedd3dc1de48f37eb04f2bad7544ba967bc
+        properties:
+        - key: path
+          value: ./bin/dbrm/EPSCMORT.DBRM
+        - key: wd_manifest_index
+          value: 0
+        - key: type
+          value: DBRM
+        type: DBRM
+        path: ./bin/dbrm/EPSCMORT.DBRM
+      step_result:
+        status: Failed
+        msg: Exception during db2_bind_package execution
+        results:
+        - status: Failed
+          msg: "Traceback (most recent call last):\n  File \"<wazideploy-3.0.8.1>/wazideploy_translator/deploy.py\"\
+            , line 1464, in process\n  File \"<wazideploy-3.0.8.1>/wazideploy_translator/deploy.py\"\
+            , line 871, in execute_building_block\n  File \"<wazideploy-3.0.8.1>/wazideploy_shared/python/modules/db2_bind_package.py\"\
+            , line 227, in process\n  File \"<wazideploy-3.0.8.1>/wazideploy_shared/python/modules/python_module.py\"\
+            , line 222, in submit_job\n  File \"<wazideploy-3.0.8.1>/wazideploy_shared/python/modules/python_module.py\"\
+            , line 358, in submit_job_after_zoau_v13\n  File \"/ZT01/var/python-envs/wazi-deploy-v3.0.8.1/lib/python3.13/site-packages/zoautil_py/jobs.py\"\
+            , line 611, in submit\n    job_id = submit_return_job_id(source, is_unix,\
+            \ **kwargs)\n  File \"/ZT01/var/python-envs/wazi-deploy-v3.0.8.1/lib/python3.13/site-packages/zoautil_py/jobs.py\"\
+            , line 555, in submit_return_job_id\n    raise JobSubmitException(zoau_response)\n\
+            zoautil_py.exceptions.JobSubmitException: [ZOAUResponse]\n\trc: 8\n\t\
+            response_format: UTF-8\n\tstdout_response:\n\tstderr_response: BGYSC4006E\
+            \ Line exceeds maximum length of 80.\n\n\tcommand: jsub -f -- \"/u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-19-18/bind_package_1.jcl\""
+      short_name: DB2_BIND
+      description: This step references a template to set db2 bind operations. For
+        both Bind Plan and Bind Package
+      loop:
+        loop_query: current_plan_step.artifacts
+        loop_var: artifact
+      loop_index: 0
+    action_result:
+      status: Failed
+      msg: Exception during execution
+      results: []
+    short_name: INDIVIDUAL_BIND
+    description: Run a Db2 bind operation for every member. Checking for available
+      member level overrides configurations.
+    loop_index: 0
+  activity_result:
+    status: Failed
+    msg: Exception during execution
+    results: []
+  short_name: DBRMS2
+  description: This activity is dedicated to DBRM bind modules and will process DBRM
+    members of the package first using dedicated PDS libraries
+  tags:
+  - db2
+  loop_index: 0
+manifests:
+- name: mortgageapplication-rel-1.1.0-13179.tar
+  description: mortgageapplication-rel-1.1.0-13179.tar
+  annotations:
+    creation_timestamp: 20260903.091918.997
+    package: /u/dbehm/wazi-deploy-include-var-tests/_testTars/mortgageapplication-rel-1.1.0-13179.tar

@@ -1,0 +1,49 @@
+** Reading the deployment file from: /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-19-18/deploymentPlan.yaml
+** Reading the target environment file from: ../../environment-configuration/python/EOLEB7-Integration.yml
+*** Validate /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-19-18/applicationArchive.tar fingerprint
+*** Checksum is valid for /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-19-18/applicationArchive.tar
+*** Validate Deployment Plan before processing it
+*** End of Deployment Plan validation
+** Registering SMF Record
+** Processing activity: LOAD_CONFIG(s)
+** Processing action: LOAD_CONFIG/READ_CONFIGURATION(s)
+** Processing step LOAD_CONFIG/READ_CONFIGURATION/INCLUDE_GLOBAL_CONFIG(s) with include_vars
+*** Read variable file /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/deployment-configuration/global/global_initialization.yml
+** Processing step LOAD_CONFIG/READ_CONFIGURATION/INCLUDE_APPLICATION_VARIABLES(s) with include_vars
+*** Could not find or access file /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/environment-configuration/application-overrides/mortgageapplication/EOLEB7-Integration.yml but ignored by files_must_exist=False
+** Processing step LOAD_CONFIG/READ_CONFIGURATION/INCLUDE_MIDDLEWARE_CONFIG(s) with include_vars
+*** Read variable file /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/deployment-configuration/global/cics_config.yml
+*** Read variable file /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/deployment-configuration/global/db2_config.yml
+*** Read variable file /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/deployment-configuration/global/zos_connect.yml
+** Processing step LOAD_CONFIG/READ_CONFIGURATION/INCLUDE_COMMON_CONFIG(s) with include_vars
+*** Read variable file /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/deployment-configuration/global/jcl_verification.yml
+*** Read variable file /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/deployment-configuration/global/pds_specification.yml
+*** Read variable file /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/deployment-configuration/global/types_pattern_mapping.yml
+*** Read variable file /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/deployment-configuration/global/db2_member_level_overrides.yml
+** Processing activity: PACKAGE(s)
+** Processing action: PACKAGE/EXPAND_PACKAGE(s)
+** Processing step PACKAGE/EXPAND_PACKAGE/PACKAGE(s) with package
+*** Processing package /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-19-18/applicationArchive.tar
+*** Expand the package /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-19-18/applicationArchive.tar to /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-19-18 on system os OS/390
+** Processing activity: DBRMS2(s)
+** Processing action: DBRMS2/BIND_VARS(s)
+** Processing step DBRMS2/BIND_VARS/LOAD(s) with include_vars
+*** Read variable file /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/EPSCMORT.bind.yml
+** Processing action: DBRMS2/INDIVIDUAL_BIND(s)
+** Processing step DBRMS2/INDIVIDUAL_BIND/MEMBER_COPY(s) with member_copy
+*** Copying 1 members to destination PDS IBMUSER.WD.TEST.TMP.DBRM
+**** Copy /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-19-18/./bin/dbrm/EPSCMORT.DBRM to 'IBMUSER.WD.TEST.TMP.DBRM(EPSCMORT)' (1/1)
+*** Copy to destination PDS IBMUSER.WD.TEST.TMP.DBRM is done
+** Processing step DBRMS2/INDIVIDUAL_BIND/DB2_BIND(s) with db2_bind_package
+*** Perform BIND PACKAGE on 'EPSCMORT.DBRM' (1/1)
+*** Perform BIND PACKAGE with DEPLOY_TEMPLATES_PATH template '../..//deployment-configuration/templates/db2_bind_execution.jcl.j2'
+*** Submit jcl /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-19-18/bind_package_1.jcl
+** Evidences saved in /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-19-18/evidences/evidence.yaml
+** Reports saved in /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-19-18/evidences/evidence.html
+global_exception: [ZOAUResponse]
+	rc: 8
+	response_format: UTF-8
+	stdout_response: 
+	stderr_response: BGYSC4006E Line exceeds maximum length of 80.
+
+	command: jsub -f -- "/u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-19-18/bind_package_1.jcl"

@@ -16,6 +16,8 @@
 *.properties zos-working-tree-encoding=ibm-1047 git-encoding=utf-8
 *.asm zos-working-tree-encoding=ibm-1047 git-encoding=utf-8
 *.jcl zos-working-tree-encoding=ibm-1047 git-encoding=utf-8
+WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs_dynamic/**/*.jcl zos-working-tree-encoding=ISO8859-1 git-encoding=utf-8
+WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs_static/**/*.jcl zos-working-tree-encoding=ISO8859-1 git-encoding=utf-8
 *.data zos-working-tree-encoding=ibm-1047 git-encoding=utf-8
 *.exec zos-working-tree-encoding=ibm-1047 git-encoding=utf-8
 *.mac zos-working-tree-encoding=ibm-1047 git-encoding=utf-8
@@ -36,6 +38,7 @@
 *.yaml zos-working-tree-encoding=utf-8 git-encoding=utf-8
 *.yml zos-working-tree-encoding=utf-8 git-encoding=utf-8
 *.j2 zos-working-tree-encoding=utf-8 git-encoding=utf-8
+*.log zos-working-tree-encoding=ibm-1047 git-encoding=utf-8
 
 # binary files
 *.png binary

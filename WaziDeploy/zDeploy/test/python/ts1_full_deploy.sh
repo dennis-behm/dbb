@@ -46,6 +46,8 @@ fi
 #
 echo "[INFO] - wazideploy-deploy."
 
+export DEPLOY_TEMPLATES_PATH=${SCRIPT_DIR}
+
 CMD="""wazideploy-deploy \
  --workingFolder $outputDir \
  --deploymentPlan $outputDir/deploymentPlan.yaml \

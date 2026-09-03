@@ -1,0 +1,8 @@
+# Individual package configuration
+epscmort_db2_config:
+  member_db2_package: "TEST"
+  member_db2_plan: "TEST"
+  member_db2_isolation: "TEST"
+  member_db2_plan_pklist: "TEST"
+  member_db2_subsys: "TEST"
+  member_db2_sqlid: "TEST"

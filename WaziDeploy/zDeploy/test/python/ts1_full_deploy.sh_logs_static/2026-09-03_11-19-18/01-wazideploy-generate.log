@@ -1,0 +1,68 @@
+*! WARNING: Identified only tar file(s) as packageInputFiles. 'configFile' will be ignored.
+* Read the deployment method from: /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/../../deployment-configuration/deployment-method.yml
+* Build the deployment plan from the deployment method
+* Computing manifest version: None
+** Generic step LOAD_CONFIG/READ_CONFIGURATION/INCLUDE_GLOBAL_CONFIG
+*** No item found
+** Generic step LOAD_CONFIG/READ_CONFIGURATION/INCLUDE_APPLICATION_VARIABLES
+*** No item found
+** Generic step LOAD_CONFIG/READ_CONFIGURATION/INCLUDE_MIDDLEWARE_CONFIG
+*** No item found
+** Generic step LOAD_CONFIG/READ_CONFIGURATION/INCLUDE_COMMON_CONFIG
+*** No item found
+** Generic step PACKAGE/EXPAND_PACKAGE/PACKAGE
+*** No item found
+** Collecting items for CICS_REGION/CSD/UPDATE
+*** No item found
+** Collecting items for DBRMS2/DELETE/MEMBER_ARCHIVE
+*** No item found
+** Collecting items for DBRMS2/DELETE/MEMBER_DELETE
+*** No item found
+** Collecting items for DBRMS2/BIND_VARS/LOAD
+*** 1 item found [EPSCMORT.DBRM]
+** Collecting items for DBRMS2/INDIVIDUAL_BIND/MEMBER_COPY
+*** 1 item found [EPSCMORT.DBRM]
+** Collecting items for DBRMS2/INDIVIDUAL_BIND/DB2_BIND
+*** 1 item found [EPSCMORT.DBRM]
+** Collecting items for DBRMS/DELETE/MEMBER_ARCHIVE
+*** No item found
+** Collecting items for DBRMS/DELETE/MEMBER_DELETE
+*** No item found
+** Collecting items for DBRMS/UPDATE/MEMBER_COPY
+*** No item found
+** Collecting items for DBRMS/UPDATE/BIND_PACKAGE
+*** No item found
+** Collecting items for DBRMS/UPDATE/BIND_PLAN
+*** No item found
+** Collecting items for DEPLOY_MODULES/DELETE/MEMBER_ARCHIVE
+*** No item found
+** Collecting items for DEPLOY_MODULES/DELETE/MEMBER_DELETE
+*** No item found
+** Collecting items for DEPLOY_MODULES/UPDATE/MEMBER_ARCHIVE
+*** 6 items found [EPSMLIS.MAPLOAD, EPSMLIST.CICSLOAD, EPSCMORT.DBRM, EPSCMORT.CICSLOAD, EPSMPMT.LOAD, EPSMORT.MAPLOAD]
+** Collecting items for DEPLOY_MODULES/UPDATE/MEMBER_COPY
+*** 6 items found [EPSMLIS.MAPLOAD, EPSMLIST.CICSLOAD, EPSCMORT.DBRM, EPSCMORT.CICSLOAD, EPSMPMT.LOAD, EPSMORT.MAPLOAD]
+** Collecting items for ROLLBACK_MODULES/RESTORE/MEMBER_RESTORE
+*** 6 items found [EPSMLIS.MAPLOAD, EPSMLIST.CICSLOAD, EPSCMORT.DBRM, EPSCMORT.CICSLOAD, EPSMPMT.LOAD, EPSMORT.MAPLOAD]
+** Collecting items for ROLLBACK_MODULES/BIND/BIND_PACKAGE
+*** 1 item found [EPSCMORT.DBRM]
+** Collecting items for ROLLBACK_MODULES/BIND/BIND_PLAN
+*** 1 item found [EPSCMORT.DBRM]
+** Collecting items for VERIFICATION/JCLEXPERT/SCAN_JCL
+*** No item found
+** Collecting items for CICS_ACTIVATION/UPDATE/PROG_UPDATE
+*** 4 items found [EPSMLIS.MAPLOAD, EPSMLIST.CICSLOAD, EPSCMORT.CICSLOAD, EPSMORT.MAPLOAD]
+** Collecting items for DEPLOY_ZOS_CONNECT/RESTORE_TO_USS/USS_ARCHIVE
+*** No item found
+** Collecting items for DEPLOY_ZOS_CONNECT/RESTORE_TO_USS/USS_COPY
+*** No item found
+** Collecting items for DEPLOY_ZOS_CONNECT/RESTORE_TO_USS/USS_RESTORE
+*** No item found
+** Collecting items for DEPLOY_ZOS_CONNECT/CONFIG_FILES/CREATE
+*** No item found
+** Generic step DEPLOY_ZOS_CONNECT/ZOS_CONNECT_SERVER/REFRESH_CONFIG
+*** No item found
+** Generic step DEPLOY_ZOS_CONNECT/ZOS_CONNECT_SERVER/REFRESH_APP
+*** No item found
+* Save the deployment plan to: /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-19-18/deploymentPlan.yaml
+* Save the deployment plan report to: /u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-19-18/deploymentPlanReport.html

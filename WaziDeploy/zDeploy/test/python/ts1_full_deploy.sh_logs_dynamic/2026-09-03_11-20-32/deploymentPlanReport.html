@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<!--
+    Licensed Materials - Property of IBM
+    (c) Copyright IBM Corporation 2022. All Rights Reserved.
+
+    Note to U.S. Government Users Restricted Rights:
+    Use, duplication or disclosure restricted by GSA ADP Schedule
+    Contract with IBM Corp.
+ -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+<title>IBM Deploy Deployment Plan</title>
+<style type="text/css">
+
+body {
+    font: 12px Arial, sans-serif;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table, th, td {
+    vertical-align: top;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+tr.even {
+    background-color: #f2f2f2
+}
+
+th {
+    background-color: #ddd;
+    color: black !important;
+}
+
+td.label {
+    font-weight: bold;
+}
+
+span.vlabel {
+    float: left;
+    font-weight: bold;
+    width: 8em;
+    margin-left: 20px;
+}
+.bottomRight {
+   float:right;
+   text-align:right;
+   font: 10px Arial, sans-serif;
+}
+
+.dep {
+    font: 11px Arial, sans-serif;
+}
+
+.depType {
+    font: 9px Arial, sans-serif;
+    background-color: #81C4E8;
+}
+
+
+</style>
+</head>
+
+<body>
+<div id="main">
+</div>
+
+<script type="application/json" id="DeployReportData">
+{
+    "apiVersion": "deploy.ibm.com/v1",
+    "kind": "DeploymentPlan",
+    "metadata": {
+        "name": "mortgageapplication-rel-1.1.0-13179.tar",
+        "description": "mortgageapplication-rel-1.1.0-13179.tar",
+        "annotations": {
+            "creation_timestamp": "20260903.092033.820",
+            "engine": {
+                "version": "3.0.8.1",
+                "build": "12",
+                "date": "Tue Aug 11 07:05:19 UTC 2026"
+            },
+            "package": {
+                "path": "/u/dbehm/wazi-deploy-include-var-tests/ts1_alternate_bind_approach/dbb/WaziDeploy/zDeploy/test/python/ts1_full_deploy.sh_logs/2026-09-03_11-20-32/applicationArchive.tar",
+                "sha256": "5898de1cea6c8b9af9a7f55405f021d01898c44febd50f6931bbd8ae8681eb48"
+            }
+        }
+    },
+    "activities": [
+        {
+            "name": "LOAD_CONFIG",
+            "description": "Load the generic Wazi Deploy Configuration variables\nSpecific for the Python implementation",
+            "properties": [],
+            "actions": [
+                {
+                    "name": "READ_CONFIGURATION",
+                    "properties": [],
+                    "steps": [
+                        {
+                            "name": "INCLUDE_GLOBAL_CONFIG",
+                            "description": "Load global include configuration global_initialization.yml from central location",
+                            "properties": [
+                                {
+                                    "key": "template",
+                                    "value": "include_vars"
+                                },
+                                {
+                                    "key": "var_include_vars",
+                                    "value": "include_global_config"
+                                }
+                            ],
+                            "artifacts": [],
+                            "types": [],
+                            "short_name": "INCLUDE_GLOBAL_CFG"
+                        },
+                        {
+                            "name": "INCLUDE_APPLICATION_VARIABLES",
+                            "description": "Load environment specific application overrides from central location",
+                            "properties": [
+                                {
+                                    "key": "template",
+                                    "value": "include_vars"
+                                },
+                                {
+                                    "key": "var_include_vars",
+                                    "value": "include_application_vars"
+                                }
+                            ],
+                            "artifacts": [],
+                            "types": [],
+                            "short_name": "INCLUDE_APP_VARS"
+                        },
+                        {
+                            "name": "INCLUDE_MIDDLEWARE_CONFIG",
+                            "description": "Load global middleware configuration configuring the Wazi Deploy building blocks",
+                            "properties": [
+                                {
+                                    "key": "template",
+                                    "value": "include_vars"
+                                },
+                                {
+                                    "key": "var_include_vars",
+                                    "value": "include_middleware_cfg"
+                                }
+                            ],
+                            "artifacts": [],
+                            "types": [],
+                            "short_name": "INCLUDE_MIDDLEWARE_CFG"
+                        },
+                        {
+                            "name": "INCLUDE_COMMON_CONFIG",
+                            "description": "Load global configuration for Wazi Deploy Core building blocks such as type mappings and dataset configurations",
+                            "properties": [
+                                {
+                                    "key": "template",
+                                    "value": "include_vars"
+                                },
+                                {
+                                    "key": "var_include_vars",
+                                    "value": "include_common_cfg"
+                                }
+                            ],
+                            "artifacts": [],
+                            "types": [],
+                            "short_name": "INCLUDE_COMMON_CFG"
+                        }
+                    ],
+                    "types": [],
+                    "short_name": "READ_CONFIG"
+                }
+            ],
+            "types": [],
+            "short_name": "LOAD_CONFIG",
+            "tags": [
+                "always"
+            ]
+        },
+        {
+            "name": "PACKAGE",
+            "description": "This activity expands the package into the working directory",
+            "properties": [],
+            "actions": [
+                {
+                    "name": "EXPAND_PACKAGE",
+                    "properties": [],
+                    "steps": [
+                        {
+                            "name": "PACKAGE",
+                            "properties": [],
+                            "artifacts": [],
+                            "types": []
+                        }
+                    ],
+                    "types": [],
+                    "short_name": "EXPAND_PACKAGE"
+                }
+            ],
+            "types": [],
+            "short_name": "PACKAGE",
+            "tags": [
+                "always"
+            ]
+        },
+        {
+            "name": "DBRMS2",
+            "description": "This activity is dedicated to DBRM bind modules and will process DBRM members of the package first using dedicated PDS libraries",
+            "properties": [],
+            "actions": [
+                {
+                    "name": "BIND_VARS",
+                    "description": "Loads bind variables",
+                    "properties": [],
+                    "steps": [
+                        {
+                            "name": "LOAD",
+                            "description": "Loads individual bind parms from package configuration file",
+                            "properties": [
+                                {
+                                    "key": "template",
+                                    "value": "include_vars"
+                                },
+                                {
+                                    "key": "var_include_vars",
+                                    "value": "db2_individual_include_vars_config"
+                                }
+                            ],
+                            "artifacts": [
+                                {
+                                    "name": "EPSCMORT",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/dbrm/EPSCMORT.DBRM"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "DBRM"
+                                        }
+                                    ],
+                                    "hash": "b6b7850dc9768d4dcfa061599dfebbedd3dc1de48f37eb04f2bad7544ba967bc"
+                                }
+                            ],
+                            "loop": {
+                                "loop_query": "wd_query[[ current_plan_step.artifacts[].name ]]",
+                                "loop_var": "dbrm_member"
+                            },
+                            "is_artifact": true,
+                            "types": [],
+                            "short_name": "LOAD"
+                        }
+                    ],
+                    "is_artifact": true,
+                    "types": [
+                        {
+                            "name": "DBRM"
+                        }
+                    ],
+                    "short_name": "BIND_VARS"
+                },
+                {
+                    "name": "INDIVIDUAL_BIND",
+                    "description": "Run a Db2 bind operation for every member. Checking for available member level overrides configurations.",
+                    "properties": [],
+                    "steps": [
+                        {
+                            "name": "MEMBER_COPY",
+                            "description": "This step copies DBRMs into temporary PDS library. See 'type_dbrm_temp'",
+                            "properties": [
+                                {
+                                    "key": "var_type",
+                                    "value": "type_dbrm_temp"
+                                }
+                            ],
+                            "artifacts": [
+                                {
+                                    "name": "EPSCMORT",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/dbrm/EPSCMORT.DBRM"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "DBRM"
+                                        }
+                                    ],
+                                    "hash": "b6b7850dc9768d4dcfa061599dfebbedd3dc1de48f37eb04f2bad7544ba967bc"
+                                }
+                            ],
+                            "types": [],
+                            "short_name": "MEMBER_COPY"
+                        },
+                        {
+                            "name": "DB2_BIND",
+                            "description": "This step references a template to set db2 bind operations. For both Bind Plan and Bind Package",
+                            "properties": [
+                                {
+                                    "key": "template",
+                                    "value": "db2_bind_package"
+                                },
+                                {
+                                    "key": "var_template_name",
+                                    "value": "db2_individual_job_template"
+                                }
+                            ],
+                            "artifacts": [
+                                {
+                                    "name": "EPSCMORT",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/dbrm/EPSCMORT.DBRM"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "DBRM"
+                                        }
+                                    ],
+                                    "hash": "b6b7850dc9768d4dcfa061599dfebbedd3dc1de48f37eb04f2bad7544ba967bc"
+                                }
+                            ],
+                            "loop": {
+                                "loop_query": "current_plan_step.artifacts",
+                                "loop_var": "artifact"
+                            },
+                            "is_artifact": true,
+                            "types": [],
+                            "short_name": "DB2_BIND"
+                        }
+                    ],
+                    "is_artifact": true,
+                    "types": [
+                        {
+                            "name": "DBRM"
+                        }
+                    ],
+                    "short_name": "INDIVIDUAL_BIND"
+                }
+            ],
+            "is_artifact": true,
+            "types": [
+                {
+                    "name": "DBRM"
+                }
+            ],
+            "short_name": "DBRMS2",
+            "tags": [
+                "db2"
+            ]
+        },
+        {
+            "name": "DEPLOY_MODULES",
+            "description": "This activity is deploys artifacts into the target PDS libraries",
+            "properties": [],
+            "actions": [
+                {
+                    "name": "UPDATE",
+                    "description": "This action is applicable when we add new or changed artifacts.",
+                    "properties": [],
+                    "steps": [
+                        {
+                            "name": "MEMBER_ARCHIVE",
+                            "description": "This step backs up already installed artifacts into the backup PDS",
+                            "properties": [],
+                            "artifacts": [
+                                {
+                                    "name": "EPSMLIS",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/mapload/EPSMLIS.MAPLOAD"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "MAPLOAD"
+                                        }
+                                    ],
+                                    "hash": "4411788da85715120a6ac7f9eca6b35fe78157be8a5c122590b1567d36a7cbe6"
+                                },
+                                {
+                                    "name": "EPSMLIST",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/cicsload/EPSMLIST.CICSLOAD"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "CICSLOAD"
+                                        }
+                                    ],
+                                    "hash": "699e98ec14b4a69ab2e868f7b8ee44bfc866fa9afd0fa8a3a5ec8a0fc31e9afb"
+                                },
+                                {
+                                    "name": "EPSCMORT",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/dbrm/EPSCMORT.DBRM"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "DBRM"
+                                        }
+                                    ],
+                                    "hash": "b6b7850dc9768d4dcfa061599dfebbedd3dc1de48f37eb04f2bad7544ba967bc"
+                                },
+                                {
+                                    "name": "EPSCMORT",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/cicsload/EPSCMORT.CICSLOAD"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "CICSLOAD"
+                                        }
+                                    ],
+                                    "hash": "c62addc540379ea9cb1dbd63d48e5845d6d683b8e0584f9f9c52ac4a31887e83"
+                                },
+                                {
+                                    "name": "EPSMPMT",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/load/EPSMPMT.LOAD"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "LOAD"
+                                        }
+                                    ],
+                                    "hash": "c67196d6ef312107724a0db8aa20a13d5cef3d1d0f99e6a5d1d02d48b61c86d4"
+                                },
+                                {
+                                    "name": "EPSMORT",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/mapload/EPSMORT.MAPLOAD"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "MAPLOAD"
+                                        }
+                                    ],
+                                    "hash": "e4e2cad6eb7c8ded6261cc07296fe14582e63cd67c9189a60b4e5eb8e3494e42"
+                                }
+                            ],
+                            "types": [],
+                            "short_name": "MEMBER_ARCHIVE"
+                        },
+                        {
+                            "name": "MEMBER_COPY",
+                            "description": "This step do the copy of artifacts into PDSs",
+                            "properties": [],
+                            "artifacts": [
+                                {
+                                    "name": "EPSMLIS",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/mapload/EPSMLIS.MAPLOAD"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "MAPLOAD"
+                                        }
+                                    ],
+                                    "hash": "4411788da85715120a6ac7f9eca6b35fe78157be8a5c122590b1567d36a7cbe6"
+                                },
+                                {
+                                    "name": "EPSMLIST",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/cicsload/EPSMLIST.CICSLOAD"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "CICSLOAD"
+                                        }
+                                    ],
+                                    "hash": "699e98ec14b4a69ab2e868f7b8ee44bfc866fa9afd0fa8a3a5ec8a0fc31e9afb"
+                                },
+                                {
+                                    "name": "EPSCMORT",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/dbrm/EPSCMORT.DBRM"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "DBRM"
+                                        }
+                                    ],
+                                    "hash": "b6b7850dc9768d4dcfa061599dfebbedd3dc1de48f37eb04f2bad7544ba967bc"
+                                },
+                                {
+                                    "name": "EPSCMORT",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/cicsload/EPSCMORT.CICSLOAD"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "CICSLOAD"
+                                        }
+                                    ],
+                                    "hash": "c62addc540379ea9cb1dbd63d48e5845d6d683b8e0584f9f9c52ac4a31887e83"
+                                },
+                                {
+                                    "name": "EPSMPMT",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/load/EPSMPMT.LOAD"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "LOAD"
+                                        }
+                                    ],
+                                    "hash": "c67196d6ef312107724a0db8aa20a13d5cef3d1d0f99e6a5d1d02d48b61c86d4"
+                                },
+                                {
+                                    "name": "EPSMORT",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/mapload/EPSMORT.MAPLOAD"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "MAPLOAD"
+                                        }
+                                    ],
+                                    "hash": "e4e2cad6eb7c8ded6261cc07296fe14582e63cd67c9189a60b4e5eb8e3494e42"
+                                }
+                            ],
+                            "types": [],
+                            "short_name": "MEMBER_COPY"
+                        }
+                    ],
+                    "types": [],
+                    "short_name": "UPDATE"
+                }
+            ],
+            "is_artifact": true,
+            "types": [
+                {
+                    "name": "LOAD"
+                },
+                {
+                    "name": "DBRM"
+                },
+                {
+                    "name": "CICSLOAD"
+                },
+                {
+                    "name": "MAPLOAD"
+                },
+                {
+                    "name": "JCL"
+                }
+            ],
+            "short_name": "DEPLOY_MODULES",
+            "tags": [
+                "deploy"
+            ]
+        },
+        {
+            "name": "ROLLBACK_MODULES",
+            "description": "This action is applicable when when restoring files from the backup\ndatasets. It is only executed when plan_tags 'restore' is provided.",
+            "properties": [],
+            "actions": [
+                {
+                    "name": "RESTORE",
+                    "description": "Retrieve members from backup dataset",
+                    "properties": [],
+                    "steps": [
+                        {
+                            "name": "MEMBER_RESTORE",
+                            "description": "This step restores the backup from the backup PDS",
+                            "properties": [],
+                            "artifacts": [
+                                {
+                                    "name": "EPSMLIS",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/mapload/EPSMLIS.MAPLOAD"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "MAPLOAD"
+                                        }
+                                    ],
+                                    "hash": "4411788da85715120a6ac7f9eca6b35fe78157be8a5c122590b1567d36a7cbe6"
+                                },
+                                {
+                                    "name": "EPSMLIST",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/cicsload/EPSMLIST.CICSLOAD"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "CICSLOAD"
+                                        }
+                                    ],
+                                    "hash": "699e98ec14b4a69ab2e868f7b8ee44bfc866fa9afd0fa8a3a5ec8a0fc31e9afb"
+                                },
+                                {
+                                    "name": "EPSCMORT",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/dbrm/EPSCMORT.DBRM"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "DBRM"
+                                        }
+                                    ],
+                                    "hash": "b6b7850dc9768d4dcfa061599dfebbedd3dc1de48f37eb04f2bad7544ba967bc"
+                                },
+                                {
+                                    "name": "EPSCMORT",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/cicsload/EPSCMORT.CICSLOAD"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "CICSLOAD"
+                                        }
+                                    ],
+                                    "hash": "c62addc540379ea9cb1dbd63d48e5845d6d683b8e0584f9f9c52ac4a31887e83"
+                                },
+                                {
+                                    "name": "EPSMPMT",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/load/EPSMPMT.LOAD"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "LOAD"
+                                        }
+                                    ],
+                                    "hash": "c67196d6ef312107724a0db8aa20a13d5cef3d1d0f99e6a5d1d02d48b61c86d4"
+                                },
+                                {
+                                    "name": "EPSMORT",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/mapload/EPSMORT.MAPLOAD"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "MAPLOAD"
+                                        }
+                                    ],
+                                    "hash": "e4e2cad6eb7c8ded6261cc07296fe14582e63cd67c9189a60b4e5eb8e3494e42"
+                                }
+                            ],
+                            "types": [],
+                            "short_name": "MEMBER_RESTORE"
+                        }
+                    ],
+                    "types": []
+                },
+                {
+                    "name": "BIND",
+                    "description": "This action runs Db2 Bind package and plan for restored DBRM members",
+                    "properties": [],
+                    "steps": [
+                        {
+                            "name": "BIND_PACKAGE",
+                            "description": "This step performs the DB2 Bind package operations for restored DBRM members",
+                            "properties": [
+                                {
+                                    "key": "template",
+                                    "value": "db2_bind_package"
+                                }
+                            ],
+                            "artifacts": [
+                                {
+                                    "name": "EPSCMORT",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/dbrm/EPSCMORT.DBRM"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "DBRM"
+                                        }
+                                    ],
+                                    "hash": "b6b7850dc9768d4dcfa061599dfebbedd3dc1de48f37eb04f2bad7544ba967bc"
+                                }
+                            ],
+                            "types": [],
+                            "short_name": "BIND_PACKAGE"
+                        },
+                        {
+                            "name": "BIND_PLAN",
+                            "description": "This step performs the DB2 Bind plan operations for restored DBRM members",
+                            "properties": [
+                                {
+                                    "key": "template",
+                                    "value": "db2_bind_plan"
+                                }
+                            ],
+                            "artifacts": [
+                                {
+                                    "name": "EPSCMORT",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/dbrm/EPSCMORT.DBRM"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "DBRM"
+                                        }
+                                    ],
+                                    "hash": "b6b7850dc9768d4dcfa061599dfebbedd3dc1de48f37eb04f2bad7544ba967bc"
+                                }
+                            ],
+                            "types": [],
+                            "short_name": "BIND_PLAN"
+                        }
+                    ],
+                    "types": [
+                        {
+                            "name": "DBRM"
+                        }
+                    ]
+                }
+            ],
+            "is_artifact": true,
+            "types": [
+                {
+                    "name": "LOAD"
+                },
+                {
+                    "name": "DBRM"
+                },
+                {
+                    "name": "CICSLOAD"
+                },
+                {
+                    "name": "MAPLOAD"
+                },
+                {
+                    "name": "JCL"
+                }
+            ],
+            "short_name": "ROLLBACK_MODULES",
+            "tags": [
+                "restore",
+                "never"
+            ]
+        },
+        {
+            "name": "CICS_ACTIVATION",
+            "description": "This activity is dedicated for deployed or restored CICS artifacts.",
+            "properties": [],
+            "actions": [
+                {
+                    "name": "UPDATE",
+                    "description": "Update CICS runtime",
+                    "properties": [],
+                    "steps": [
+                        {
+                            "name": "PROG_UPDATE",
+                            "description": "Refreshes CICS programs and maps via the CMCI interface",
+                            "properties": [
+                                {
+                                    "key": "template",
+                                    "value": "cics_cmci_prog_update"
+                                }
+                            ],
+                            "artifacts": [
+                                {
+                                    "name": "EPSMLIS",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/mapload/EPSMLIS.MAPLOAD"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "MAPLOAD"
+                                        }
+                                    ],
+                                    "hash": "4411788da85715120a6ac7f9eca6b35fe78157be8a5c122590b1567d36a7cbe6"
+                                },
+                                {
+                                    "name": "EPSMLIST",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/cicsload/EPSMLIST.CICSLOAD"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "CICSLOAD"
+                                        }
+                                    ],
+                                    "hash": "699e98ec14b4a69ab2e868f7b8ee44bfc866fa9afd0fa8a3a5ec8a0fc31e9afb"
+                                },
+                                {
+                                    "name": "EPSCMORT",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/cicsload/EPSCMORT.CICSLOAD"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "CICSLOAD"
+                                        }
+                                    ],
+                                    "hash": "c62addc540379ea9cb1dbd63d48e5845d6d683b8e0584f9f9c52ac4a31887e83"
+                                },
+                                {
+                                    "name": "EPSMORT",
+                                    "properties": [
+                                        {
+                                            "key": "path",
+                                            "value": "./bin/mapload/EPSMORT.MAPLOAD"
+                                        },
+                                        {
+                                            "key": "wd_manifest_index",
+                                            "value": 0
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "MAPLOAD"
+                                        }
+                                    ],
+                                    "hash": "e4e2cad6eb7c8ded6261cc07296fe14582e63cd67c9189a60b4e5eb8e3494e42"
+                                }
+                            ],
+                            "types": [],
+                            "short_name": "PROG_UPDATE"
+                        }
+                    ],
+                    "types": [],
+                    "short_name": "UPDATE"
+                }
+            ],
+            "is_artifact": true,
+            "types": [
+                {
+                    "name": "CICSLOAD"
+                },
+                {
+                    "name": "MAPLOAD"
+                }
+            ],
+            "short_name": "CICS_ACTIVATION",
+            "tags": [
+                "restore"
+            ]
+        },
+        {
+            "name": "DEPLOY_ZOS_CONNECT",
+            "description": "This activity deals with IBM z/OS Connect artifacts",
+            "properties": [],
+            "actions": [
+                {
+                    "name": "ZOS_CONNECT_SERVER",
+                    "description": "Refresh z/OS Connect config and applications via a modify command",
+                    "properties": [],
+                    "steps": [
+                        {
+                            "name": "REFRESH_CONFIG",
+                            "properties": [
+                                {
+                                    "key": "template",
+                                    "value": "system_command"
+                                },
+                                {
+                                    "key": "var_system_command",
+                                    "value": "system_command_refresh_config"
+                                }
+                            ],
+                            "artifacts": [],
+                            "types": []
+                        },
+                        {
+                            "name": "REFRESH_APP",
+                            "properties": [
+                                {
+                                    "key": "template",
+                                    "value": "system_command"
+                                },
+                                {
+                                    "key": "var_system_command",
+                                    "value": "system_command_refresh_apps"
+                                }
+                            ],
+                            "artifacts": [],
+                            "types": []
+                        }
+                    ],
+                    "types": []
+                }
+            ],
+            "types": [],
+            "short_name": "DEPLOY_ZOS_CONNECT"
+        }
+    ],
+    "manifests": [
+        {
+            "name": "mortgageapplication-rel-1.1.0-13179.tar",
+            "description": "mortgageapplication-rel-1.1.0-13179.tar",
+            "annotations": {
+                "creation_timestamp": "20260903.092033.333",
+                "package": "/u/dbehm/wazi-deploy-include-var-tests/_testTars/mortgageapplication-rel-1.1.0-13179.tar"
+            }
+        }
+    ],
+    "deployment_methods": [
+        {
+            "apiVersion": "deploy.ibm.com/v1",
+            "kind": "DeploymentMethod",
+            "metadata": {
+                "name": "CICS",
+                "description": "This deployment method can be use for the deployment of an CICS application.",
+                "version": "1.0.0",
+                "annotations": {
+                    "deployVersion": "1.0.0"
+                }
+            }
+        }
+    ],
+    "loop_vars": [
+        "dbrm_member",
+        "artifact",
+        "jcl_member",
+        "api_name"
+    ]
+}
+</script>
+
+<script type="text/javascript">
+var deployReport = JSON.parse(document.getElementById('DeployReportData').innerHTML);
+render();
+
+function toggle(dep, text)
+{
+    if (document.getElementById(text).text == 'Show Dependencies')
+        document.getElementById(text).text = 'Hide Dependencies';
+    else
+        document.getElementById(text).text = 'Show Dependencies';
+
+    if (document.getElementById(dep).style.display == 'none')
+        document.getElementById(dep).style.display = 'block';
+    else
+        document.getElementById(dep).style.display = 'none';
+};
+
+
+
+/*******************************************************************************
+ * Licensed Materials - Property of IBM
+ * (c) Copyright IBM Corporation 2022. All Rights Reserved.
+ *
+ * Note to U.S. Government Users Restricted Rights:
+ * Use, duplication or disclosure restricted by GSA ADP Schedule
+ * Contract with IBM Corp.
+ *******************************************************************************/
+ function render()
+ {
+         var tableHtml = "";
+         var manifestHtml = "";
+         var cActivities = new Object();
+         var versionInfoHtml = "";
+         tableHtml += "<table border='1px solid #A9A9A9' style='width:100%;'><tr><th id=\"sequence\"></th><th id=\"name\">Activities</th><th id=\"commands\">Actions</th><th id=\"rc\">Steps</th></tr>";
+         var counter = 1;
+         for (x in deployReport.activities)
+         {
+             var activity = deployReport.activities[x];
+             tableHtml += renderExec(counter++, activity);
+         }
+         
+         if (typeof deployReport.metadata.annotations !== 'undefined' && typeof deployReport.metadata.annotations.engine !== 'undefined'  ) {
+            versionInfoHtml = "<div id='VersionInfo'><p><h3>Wazi Deploy Version:</h3></p>";
+            versionInfoHtml += "<span class='vlabel'>Version: </span>" + deployReport.metadata.annotations.engine.version;
+            versionInfoHtml += "<br><span class='vlabel'>Build: </span>" + deployReport.metadata.annotations.engine.build;
+            versionInfoHtml += "<br><span class='vlabel'>Date: </span>" + deployReport.metadata.annotations.engine.date;
+            versionInfoHtml += "</div>"
+         }
+
+         manifestHtml = "<div id='ManifestInfo'><p><h3>Manifests Information:</h3>";
+
+         if ( typeof deployReport.manifests !== 'undefined' ) {
+             for (x in deployReport.manifests)
+             {
+                 var manifest = deployReport.manifests[x];
+                 manifestHtml += "<span class='vlabel'>Name: </span>" + manifest.name;
+                 if ( manifest.version !== 'undefined' )
+                    manifestHtml += "<br><span class='vlabel'>Version: </span>" + manifest.version;
+                 if ( manifest.description !== 'undefined' )
+                    manifestHtml += "<br><span class='vlabel'>Description: </span>" + manifest.description;
+                 if (typeof manifest.annotations !== 'undefined' && typeof manifest.annotations.scm !== 'undefined'  ) {
+                    manifestHtml += "<br><span class='vlabel'>Source Code: </span>"
+                    manifestHtml += "<br><span class='vlabel'>&nbsp;&nbsp;&nbsp;Type: </span>" + manifest.annotations.scm.type;
+                    if (typeof manifest.annotations.scm.uri !== 'undefined') {
+                        if ( manifest.annotations.scm.uri.startsWith('http') )
+                            manifestHtml += "<br><span class='vlabel'>&nbsp;&nbsp;&nbsp;Uri: </span><a href='" + manifest.annotations.scm.uri +"' target='other'>" + manifest.annotations.scm.uri + "</a>";
+                        else
+                            manifestHtml += "<br><span class='vlabel'>&nbsp;&nbsp;&nbsp;Uri: </span>" + manifest.annotations.scm.uri;
+                    }
+                    if (typeof manifest.annotations.scm.branch !== 'undefined') 
+                        manifestHtml += "<br><span class='vlabel'>&nbsp;&nbsp;&nbsp;Branch: </span>" + manifest.annotations.scm.branch;
+                    if (typeof manifest.annotations.scm.shortCommit !== 'undefined') 
+                        manifestHtml += "<br><span class='vlabel'>&nbsp;&nbsp;&nbsp;Short Commit: </span>" + manifest.annotations.scm.shortCommit;    
+                 }
+                 if (typeof manifest.annotations !== 'undefined' && typeof manifest.annotations.package !== 'undefined'  ) {
+                    manifestHtml += "<br><span class='vlabel'>Package: </span>"
+                    manifestHtml += "<br><span class='vlabel'>&nbsp;&nbsp;&nbsp;Type: </span>" + manifest.annotations.package.type;
+                    manifestHtml += "<br><span class='vlabel'>&nbsp;&nbsp;&nbsp;Uri: </span><a href='"+manifest.annotations.package.uri+"' target='other'>" + manifest.annotations.package.uri + "</a>";
+                 }
+                 if (typeof manifest.annotations !== 'undefined' && typeof manifest.annotations.dbb !== 'undefined' && typeof manifest.annotations.dbb.buildResultUri !== 'undefined' ) {
+                    manifestHtml += "<br><span class='vlabel'>DBB: </span>"
+                    manifestHtml += "<br><span class='vlabel'>&nbsp;&nbsp;&nbsp;DBB Build Result: </span><a href='"+manifest.annotations.dbb.buildResultUri+"' target='other'>" + manifest.annotations.dbb.buildResultUri + "</a>";
+                 }
+             }
+                 manifestHtml += "</div>"
+         } else {
+                 manifestHtml += "<span class='vlabel'>Name: </span>" + deployReport.metadata.name;
+                 if ( deployReport.version !== 'undefined' )
+                    manifestHtml += "<br><span class='vlabel'>Version: </span>" + deployReport.metadata.version;
+                 if (deployReport.description !== 'undefined' )
+                    manifestHtml += "<br><span class='vlabel'>Description: </span>" + deployReport.metadata.description;
+         }
+         tableHtml += "</table>";
+         var mainHtml = "<a class=\"offleft\" href=\"#deploySummary\">Main Content</a>";
+         mainHtml += "<h2>Deployment Plan Report</h2>"
+         var deploySummaryHtml = "<div id='deploySummary'>";
+         deploySummaryHtml += "<p><h3>Deployment Plan Summary</h3><p>Number of activities: " + (counter-1);
+         deploySummaryHtml += "<p>" + tableHtml + "</div>";
+         mainHtml += versionInfoHtml;
+         mainHtml += manifestHtml;
+         mainHtml += deploySummaryHtml;
+         var main = document.getElementById("main");
+         main.insertAdjacentHTML("beforeend", mainHtml);
+ }
+ 
+ function renderExec(counter, cActivity)
+ {
+     var tr  = "<tr>";
+     if (counter % 2 == 0)
+         tr = "<tr class='even'>";
+     var rowHtml = tr;
+     if ( typeof cActivity.description !== 'undefined' )
+         rowHtml += "<td headers=\"sequence\" rowspan='" + cActivity.actions.length + "'>" + counter + "</td><th id=\"" + cActivity.name + "\" headers=\"activity\" rowspan='" + cActivity.actions.length + "' style='width:10%;'>" + cActivity.name + "<br>" + cActivity.description ;
+     else
+         rowHtml += "<td headers=\"sequence\" rowspan='" + cActivity.actions.length + "'>" + counter + "</td><th id=\"" + cActivity.name + "\" headers=\"activity\" rowspan='" + cActivity.actions.length + "' style='width:10%;'>" + cActivity.name;
+     rowHtml += "</th>";
+     var cActivityCount = 0;
+     for (x in cActivity.actions)
+     {
+         var cAction = cActivity.actions[x];
+         if ( typeof cAction.description !== 'undefined' )
+            rowHtml += "<td headers=\""+cAction.name+" actions\" style='width:10%;'><b>" + cAction.name + "<br>" + cAction.description + "</b></td>";
+         else
+            rowHtml += "<td headers=\""+cAction.name+" actions\" style='width:10%;'><b>" + cAction.name + "</b></td>";
+         rowHtml += "<td headers=\""+cAction.name+" Steps\">"
+            
+        rowHtml += "<table cellspacing='0' cellpadding='0' border=1px style='width:100%;'>";
+        rowHtml += "<tr border='1px solid #A9A9A9' style='width:100%;'><td style='width:200px;'><b>Steps</b></td><td><b>Artifacts<b/></td></tr>"
+        for (y  in cAction.steps) {
+            var cStep = cAction.steps[y];
+            if ( typeof cStep.description !== 'undefined' )
+                rowHtml += "<tr><td style='width:20%;' ><b>" + cStep.name + "<br>" + cStep.description + "</b></td><td style='width:500px;'>";
+            else
+                rowHtml += "<tr><td style='width:20%;' ><b>" + cStep.name + "</b></td><td style='width:500px;'>";
+            rowHtml += "<table cellspacing='0' cellpadding='0' border=0px style='width:100%;'>";
+             for (z in cStep.artifacts)
+             {
+                var cArtifact = cStep.artifacts[z];
+                for ( prop in cArtifact.properties ) {
+                    cProperty = cArtifact.properties[prop];
+                    if ( cProperty.key == "path" ) {
+                        path =  cProperty.value.replace('\\', '/')
+                        idx = path.lastIndexOf('/')
+                        typeIdx = path.lastIndexOf('.')
+                        rowHtml += "<tr><td><b>Path</b>: " + path.substring(0, idx) + "</td><td><b>File</b>: " + path.substring(idx+1, typeIdx) + "</td><td><b>Type</b>: " + path.substring(typeIdx+1) + "</td></tr>";
+                    }
+                }
+             }
+             rowHtml += "</table>";
+             rowHtml += "</td></tr>"
+        }
+        rowHtml += "</table>"
+        rowHtml +=  "</td>"
+        if (cActivityCount < cActivity.actions.length)
+          rowHtml += "</tr>" + tr;
+        cActivityCount++;
+     }
+     rowHtml += "</tr>";
+     return rowHtml;
+ } 
+</script>
+
+
+
+
+</body></html>
